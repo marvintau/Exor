@@ -66,7 +66,7 @@ in the future, and I'm not likely to use any other
 syscall.
  */
 formatter:
-  .asciz "An number example: %d\n"
+  .asciz "A number example: %d\n"
 
 welcome:
   .asciz "Hello the inner world!\n"
@@ -81,14 +81,12 @@ _main:
 	=============================
 	https://www.classes.cs.uchicago.edu/archive/2009/spring/22620-1/docs/handout-03.pdf
 	
-	Basically the caller will pass it's frame pointer
+	Basically the caller will pass its frame pointer
 	(the address where its stack starts) to the callee,
 	which stored in %rbp. Thus here we push the %rbp to
 	the stack. The caller's stack pointer will be also
-	pass to callee, stored in %rsp, will become callee's
-	frame pointer. the pushq %rbp and popq %rbp should be
-	always appear at the beginning and the end of the
-	main routine.
+	pass to callee, stored in %rsp, and will become callee's
+	frame pointer.
  */
 	pushq	%rbp
 	movq	%rsp, %rbp
