@@ -1,0 +1,11 @@
+# SanityCheck
+
+Begin to implement the dictionary structure
+
+Problem: __unable to move syscall out of main__
+         The problem caused by using $1 as the placeholder of the macro 
+         argument, which conflicts to the usage of immediate operand.
+{Done} : Use parentheses to enclose the operand like $(_YourNumber_)
+
+Problem: __Something wrong with loading the string length from memory__
+         No problem with compiling, just giving no result. While no problem when passing an immediate number to register.
