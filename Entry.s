@@ -4,17 +4,58 @@
  *  Containing learning notes and resources
  */
 
-.include "Data.s"
 .include "Utils.s"
 
 .section __DATA,__data
 
-String Msg, "Yup.\n"
-
-.set SyscallExit,		0x2000001
-.set SyscallDisplay,	0x2000004
-
 .section __TEXT,__text
+
+# Define words that consists of other words.
+.macro DefineWord name
+	.section .rodata
+	.align 8
+	.globl NameLabel\name
+NameLabel\name :
+	.int link
+	.set link,name_\label
+	.byte \flags + (EndNameLabel\name - .)
+	.ascii "\name"		// the name
+EndNameLabel\name:
+	.align 4		// padding to next 4 byte boundary
+	.globl \label
+\label :
+	.int Momentum
+.endm
+
+# DefineCode defines the assembly code word in memory.
+.macro DefineCode name
+	.section .rodata
+	.align 8
+	.globl NameLabel\name
+NameLabel\name :
+	.int link		// link
+	.set link,NameLabel\name
+	.byte 
+	.ascii "\name"		// the name
+	.align 4		// padding to next 4 byte boundary
+	.globl \label
+CodeLabel\name :
+	.int code_\label	// codeword
+	.text
+	//.align 4
+	.globl code_\label
+Code\name :			// assembler code follows
+.endm
+
+.macro DefineVariable name, flags=0, initial=0
+	DefineCode \name
+	push $Variable\name
+	LoadJumpNext
+	.data
+	.align 4
+Variable\name :
+	.int \initial
+.endm
 
 .macro LoadJumpNext
 	lodsq
@@ -33,10 +74,13 @@ String Msg, "Yup.\n"
 
 .globl _main
 
-momentum:
+# Momentum is the most cardinal part of Exor. Momentum pushes the
+# result of the word onto the return stack, and fetches the next 
+# word.
+Momentum:
 	PushReturnStack %rsi 
-	addl $8,%rax
-	movl %rax,%rsi
+	addq $8,%rax
+	movq %rax,%rsi
 	LoadJumpNext
 
 
@@ -45,7 +89,7 @@ _main:
 	pushq	%rbp
 	movq	%rsp, %rbp
 
-	DisplayString Msg
+	DisplayString Msg, "Yup.\n"
 
 	popq	%rbp
 	
