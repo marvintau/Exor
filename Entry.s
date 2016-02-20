@@ -6,8 +6,6 @@
 
 .include "Utils.s"
 
-.section __DATA,__data
-
 .section __TEXT,__text
 
 # Define words that consists of other words.
@@ -72,6 +70,9 @@ Variable\name :
 	leaq 8(%rbp),%rbp
 .endm
 
+
+
+
 .globl _main
 
 # Momentum is the most cardinal part of Exor. Momentum pushes the
@@ -86,6 +87,9 @@ Momentum:
 
 _main:
 
+	cld
+
+
 	pushq	%rbp
 	movq	%rsp, %rbp
 
@@ -94,3 +98,6 @@ _main:
 	popq	%rbp
 	
 	ExitProgram	
+
+
+.include "DataSegment.s"

@@ -2,11 +2,13 @@
 .set SyscallDisplay,	0x2000004
 
 .macro DisplayString Label, String
-	jmp		Display\Label
+	.data
 \Label:
 	.asciz "\String"
 Size\Label:
 	.quad . - \Label
+
+	.text
 Display\Label:
 	movl	$SyscallDisplay, %eax
 	movl	$1, %edi
