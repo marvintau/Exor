@@ -1,6 +1,8 @@
 
 # Used by ParseStringBuffer
 # The length should always be the half of StringBuffer
+StringBufferDelimitersOffset:
+	.quad	0
 StringBufferDelimitersLength:
 	.quad	0
 StringBufferDelimiters:
