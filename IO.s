@@ -41,6 +41,7 @@ Display\Label:
 	movq	StringBuffer@GOTPCREL(%rip), %rsi
 	movq	$(StringBufferEnd - StringBuffer), %rdx
 	syscall
+	decq	%rax  # enter should be ommited
 	movq	%rax, StringBufferLength(%rip)
 .endm
 
@@ -100,6 +101,7 @@ Display\Label:
 		incq %r12
 
 	loop IterateOverStringBuffer
+	incq (%r13)
 .endm
 
 // .set   DelimitersOffset, 0
@@ -112,6 +114,7 @@ Display\Label:
 	pushq	%rcx
 		DisplayParsedString %r13, (%r12)
 		movzbq (%r12), %r15
+		incq %r15
 		addq %r15, %r13
 		incq %r12
 	popq	%rcx
