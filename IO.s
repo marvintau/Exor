@@ -27,11 +27,11 @@ Display\Label:
 	syscall
 .endm
 
-.macro DisplayString address, length
+.macro DisplayParsedString address, length
 	movl	$SyscallDisplay, %eax
 	movl	$(1), %edi
 	movq	\address, %rsi
-	movq	\length, %rdx
+	movzbq	\length, %rdx
 	syscall
 .endm
 
@@ -83,19 +83,19 @@ Display\Label:
 			# add the BYTE in the memory where %r14 points to
 			# by 1.
 			incb (%r14)
-
+			jmp FinishedCheck
 		CreateNewLength:
 			# If the scanned character IS a space, then check
 			# the current byte that %r14 points to is zero,
 			# which means the LAST scanned character is ALSO
 			# a space. Do nothing in this case.
 			cmpq $(0x00), (%r14)
-			je NoNeedToCreateNewLength
+			je FinishedCheck
 			# Otherwise, 
 				incq %r14
 				incq (%r13)
 
-			NoNeedToCreateNewLength:
+		FinishedCheck:
 
 		incq %r12
 
@@ -110,11 +110,11 @@ Display\Label:
 
 	IterateOverStringBufferDelimiters:
 	pushq	%rcx
-		DisplayStringBuffer
+		DisplayParsedString %r13, (%r12)
+		movzbq (%r12), %r15
+		addq %r15, %r13
+		incq %r12
 	popq	%rcx
-		// DisplayString %r13, (%r12)
-		// addq (%r12), %r13
-		// incq %r12
 	loop IterateOverStringBufferDelimiters
 .endm
 
