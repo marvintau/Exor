@@ -33,9 +33,9 @@ _main:
 
 	// DisplayStringConstant Msg, "Yup.\n"
 	ScanStringBuffer
-
-	DisplayStringBuffer
-	
+	// DisplayStringBuffer
+	ParseStringBuffer
+	DisplayParsedStringBuffer
 	popq	%rbp
 	
 	ExitProgram	

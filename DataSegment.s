@@ -1,13 +1,18 @@
-# Used by DisplayRegister
-RegDump:
+
+# Used by ParseStringBuffer
+# The length should always be the half of StringBuffer
+StringBufferDelimitersLength:
 	.quad	0
+StringBufferDelimiters:
+	.fill	128, 1, 0x00
+StringBufferDelimitersEnd:
 
 # Used by ScanStringBuffer
-StringBuffer:
-	.fill 	256, 1, 0xFF 
-StringBufferEnd:
-StringBufferPointer:
+StringBufferLength:
 	.quad	0
+StringBuffer:
+	.fill 	256, 1, 0x00 
+StringBufferEnd:
 
 
 .set RETURN_STACK_SIZE,256
