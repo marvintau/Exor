@@ -18,15 +18,6 @@ Display\Label:
 	syscall
 .endm
 
-.macro DisplayStringBuffer
-	movl	$SyscallDisplay, %eax
-	movl	$(1), %edi
-	movq	StringBuffer@GOTPCREL(%rip), %rsi
-	movq	StringBufferLength(%rip), %rdx
-	// movq	$(16), %rdx
-	syscall
-.endm
-
 .macro DisplayParsedString address, length
 	movl	$SyscallDisplay, %eax
 	movl	$(1), %edi
@@ -47,27 +38,6 @@ Display\Label:
 
 .macro ParseStringBuffer
 	
-	# We are going to use the last (and least used) four 
-	# registers to perform the loop. The usage of registers
-	# might be modified when migrating to different platforms.
-
-	# Here we make a convention of making a loop for
-	# convenience and clarity. The loop variable (the one
-	# that keeps decreasing) should be assigned first, then
-	# the affected address (pointer) in same buffer, and then
-	# the other less-related variable and pointers.
-
-	# Since almost all memory that indicating length of buffer
-	# have same length (quadword), it's okay to address the
-	# buffer by using
-	#
-	# addq (StringBufferLength + Offset)(%rip), %rax
-	#
-	# instead of saving it into registers in advance. However
-	# this would make the whole procedure take several times
-	# of more cycles. This is what the registers are made for.
-
-	// xorq	%rcx, %rcx
 	movq	StringBufferLength(%rip), %rcx
 	movq	StringBuffer@GOTPCREL(%rip), %r12
 	movq	StringBufferDelimitersLength@GOTPCREL(%rip), %r13
@@ -75,15 +45,12 @@ Display\Label:
 	movq 	StringBufferDelimitersOffset@GOTPCREL(%rip), %r15
 	movq 	$(0x00), %rdx
 
-	IterateOverStringBuffer:
+	ForAllCharactersInStringBuffer:
 		cmpb $(0x20), (%r12)
-		jne AddCurrentLength
-		je  CreateNewLength
+		jne IncreaseCurrentDelimiterInterval
+		je  CreateNewDelimiterInterval
 		
-		AddCurrentLength:
-			# If the scanned character IS NOT a space, then
-			# add the BYTE in the memory where %r14 points to
-			# by 1.
+		IncreaseCurrentDelimiterInterval:
 			incb (%r14)
 			cmpq $(0x00), %rdx
 			jne FinishedCheck
@@ -93,11 +60,7 @@ Display\Label:
 
 			jmp FinishedCheck
 
-		CreateNewLength:
-			# If the scanned character IS a space, then check
-			# the current byte that %r14 points to is zero,
-			# which means the LAST scanned character is ALSO
-			# a space. Do nothing in this case.
+		CreateNewDelimiterInterval:
 			cmpq $(0x00), %rdx
 			je IncreaseOffset
 			jne ContinueCheckDelimiters
@@ -117,7 +80,7 @@ Display\Label:
 
 		incq %r12
 
-	loop IterateOverStringBuffer
+	loop ForAllCharactersInStringBuffer
 
 	cmpq $(0x00), (%r14)
 	je NotAddRemainingOne
@@ -126,7 +89,6 @@ Display\Label:
 	NotAddRemainingOne:
 .endm
 
-// .set   DelimitersOffset, 0
 .macro DisplayParsedStringBuffer
 	movq	StringBufferDelimitersLength(%rip), %rcx
 	movq	StringBufferDelimiters@GOTPCREL(%rip), %r12
@@ -134,16 +96,16 @@ Display\Label:
 
 	addq	StringBufferDelimitersOffset(%rip), %r13
 
-	IterateOverStringBufferDelimiters:
+	ForAllDelimiters:
 	pushq	%rcx
 		DisplayParsedString %r13, (%r12)
 		DisplayStringConstant Return, "\n"
-		movzbq (%r12), %r15
-		incq %r15
-		addq %r15, %r13
-		incq %r12
+		movzbq (%r12), %r15		# move delimiter interval pointed by %r12 to %r15
+		incq %r15				# increase the delimiter to omit the space
+		addq %r15, %r13			# add the increment of pointer to buffer pointer
+		incq %r12				# move to next delimiter interval
 	popq	%rcx
-	loop IterateOverStringBufferDelimiters
+	loop ForAllDelimiters
 .endm
 
 .macro ExitProgram

@@ -31,9 +31,8 @@ _main:
 	pushq	%rbp
 	movq	%rsp, %rbp
 
-	// DisplayStringConstant Msg, "Yup.\n"
+	
 	ScanStringBuffer
-	// DisplayStringBuffer
 	ParseStringBuffer
 	DisplayParsedStringBuffer
 	popq	%rbp
