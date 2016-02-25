@@ -118,7 +118,12 @@ Display\Label:
 		incq %r12
 
 	loop IterateOverStringBuffer
-	// incq (%r13)
+
+	cmpq $(0x00), (%r14)
+	je NotAddRemainingOne
+	# Add Remaining one:
+		incq (%r13)
+	NotAddRemainingOne:
 .endm
 
 // .set   DelimitersOffset, 0
