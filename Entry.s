@@ -6,35 +6,41 @@
 
 .section __DATA, __data
 .include "DataSegment.s"
+.include "ExorMacros.s"
 
-.section __TEXT,__text
+string1:
+	.asciz "haha"
+string2:
+	.asciz "haha"
+stringLength:
+	.quad  4
+
+.section __TEXT, __text
 .include "IO.s"
 
 
 .globl _main
 
-# Momentum is the most cardinal part of Exor. Momentum pushes the
-# result of the word onto the return stack, and fetches the next 
-# word.
-// Momentum:
-// 	PushReturnStack %rsi 
-// 	addq $8,%rax
-// 	movq %rax,%rsi
-// 	LoadJumpNext
-
+FindEntry:
 
 _main:
 
-	cld
+	// cld
 
-
-	pushq	%rbp
-	movq	%rsp, %rbp
+	// pushq	%rbp
+	// movq	%rsp, %rbp
 
 	
-	ScanStringBuffer
-	ParseStringBuffer
-	DisplayParsedStringBuffer
-	popq	%rbp
+	// ScanStringBuffer
+	// ParseStringBuffer
+	// EvaluateUserLexusWith DisplayUserLexus
+	// popq	%rbp
+
+	CompareString string1, string2, stringLength
+	je Equal
+	DisplayStringConstant haha, "Not Equal"
 	
+	Equal:
+		DisplayStringConstant hehe, "Equal"
+
 	ExitProgram	

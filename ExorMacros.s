@@ -1,61 +1,42 @@
-# Define words that consists of other words.
-.macro DefineWord name
-	.section .rodata
+.macro DefineDummyWord name explanation
 	.align 8
-	.globl NameLabel\name
-NameLabel\name :
-	.int link
-	.set link,name_\label
-	.byte \flags + (EndNameLabel\name - .)
-	.ascii "\name"		// the name
-EndNameLabel\name:
-	.align 4		// padding to next 4 byte boundary
-	.globl \label
-\label :
-	.int Momentum
+	.globl DummyWord\name
+
+DummyWord\name:
+	.quad (EndDummyWord\name - .)
+	.ascii "\name"
+EndDummyWord\name:
+
+ExplainLabel\name:
+	.quad (EndExplainLabel\name - .)
+	.ascii "\explanation"
+EndExplainLabel\name:
 .endm
 
-# DefineCode defines the assembly code word in memory.
-.macro DefineCode name
-	.section .rodata
-	.align 8
-	.globl NameLabel\name
-NameLabel\name :
-	.int link		// link
-	.set link,NameLabel\name
-	.byte 
-	.ascii "\name"		// the name
-	.align 4		// padding to next 4 byte boundary
-	.globl \label
-CodeLabel\name :
-	.int code_\label	// codeword
-	.text
-	//.align 4
-	.globl code_\label
-Code\name :			// assembler code follows
+.section __DATA, __data
+DummyWord:
+	DefineDummyWord Adam, "First created man"
+	# DefineDummyWord Eve, "First created woman"
+DummyWordEnd:
+.section __TEXT, __text
+
+# Iterates over two string with same length, exits once difference
+# is found, or no difference found.
+# AFFECTED REGISTERS: al(rax), rcx, r12, r13
+.macro CompareString StringPointer1, StringPointer2, Length
+
+	movq \Length(%rip), %rcx
+	leaq \StringPointer1(%rip), %r12
+	leaq \StringPointer2(%rip), %r13
+
+	ForEachCharacter:
+		movb -1(%r12, %rcx), %al
+		cmpb -1(%r13, %rcx), %al
+		jne Done
+	loop ForEachCharacter
+	Done:
 .endm
 
-.macro DefineVariable name, flags=0, initial=0
-	DefineCode \name
-	push $Variable\name
-	LoadJumpNext
-	.data
-	.align 4
-Variable\name :
-	.int \initial
-.endm
-
-.macro LoadJumpNext
-	lodsq
-	jmp *(%rax)
-.endm
-
-.macro PushReturnStack reg
-	leaq -8(%rbp),%rbp
-	movq \reg,(%rbp)
-.endm
-
-.macro PopReturnStack reg
-	movq (%rbp),\reg
-	leaq 8(%rbp),%rbp
+.macro FindDummyWord
+	
 .endm
