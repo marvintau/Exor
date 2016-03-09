@@ -12,8 +12,8 @@ EndExplainLabel\name:
 
 .section __DATA, __data
 DummyWords:
-	DefineDummyWord God, "He Is Who He Is"
-	DefineDummyWord Adam, "First created man"
+	DefineDummyWord God, "He Is Who He Is\n"
+	DefineDummyWord Adam, "First created man\n"
 	DefineDummyWord Eve, "First created woman"
 	.word 0xbeef 
 DummyWordsEnd:
@@ -39,6 +39,9 @@ DummyWordsEnd:
 	# length of string. 
 	subq $0x8, \LengthRegister
 	ForEachCharacter:
+		# NOTE: Since the offset + length will point to the first byte of
+		# the length of the next string, instead of the end of current
+		# string, we need to minus one byte.
 		movb -1(\StringPointer1, \LengthRegister), %al
 		cmpb -1(\StringPointer2, \LengthRegister), %al
 		jne NotEqual

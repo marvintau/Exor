@@ -5,7 +5,7 @@
 .macro DisplayStringConstant Label, String
 	.data
 \Label:
-	.asciz "\String"
+	.ascii "\String"
 Size\Label:
 	.quad . - \Label
 
@@ -21,7 +21,7 @@ Display\Label:
 .macro ScanStringBuffer
 	movl	$SyscallRead, %eax
 	movl	$(1), %edi
-	movq	StringBuffer@GOTPCREL(%rip), %rsi
+	leaq	StringBuffer(%rip), %rsi
 	movq	$(StringBufferEnd - StringBuffer), %rdx
 	syscall
 	decq	%rax  # for ommitting the final enter key
@@ -31,10 +31,10 @@ Display\Label:
 .macro ParseStringBuffer
 	
 	movq	StringBufferLength(%rip), %rcx
-	movq	StringBuffer@GOTPCREL(%rip), %r12
-	movq	UserLexusLength@GOTPCREL(%rip), %r13
-	movq	UserLexus@GOTPCREL(%rip), %r14
-	movq 	UserLexusOffset@GOTPCREL(%rip), %r15
+	leaq	StringBuffer(%rip), %r12
+	leaq	UserLexusLength(%rip), %r13
+	leaq	UserLexus(%rip), %r14
+	leaq 	UserLexusOffset(%rip), %r15
 	movq 	$(0x00), %rdx
 
 	ForAllCharactersInStringBuffer:
@@ -89,13 +89,13 @@ Display\Label:
 	movq	\length, %rdx
 	syscall
 
-	DisplayStringConstant Return, "\n"
+	// DisplayStringConstant Return, "\n"
 .endm
 
 .macro EvaluateUserLexusWith Action
 	movq	UserLexusLength(%rip), %rcx
-	movq	UserLexus@GOTPCREL(%rip), %r12
-	movq	StringBuffer@GOTPCREL(%rip), %r13
+	leaq	UserLexus(%rip), %r12
+	leaq	StringBuffer(%rip), %r13
 
 	addq	UserLexusOffset(%rip), %r13
 
