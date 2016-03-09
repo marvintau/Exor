@@ -28,23 +28,25 @@ DummyWordsEnd:
 
 # AFFECTED REGISTERS: rax, rcx
 # AFFECTED FLAGS: ZF
-.macro CompareString StringPointer1, StringPointer2, Length1, Length2
+.macro CompareString LengthRegister, ResultRegister, StringPointer1, StringPointer2, Length1, Length2
 
-	movq \Length2, %rcx
-	cmpq \Length1, %rcx
+	movq \Length2, \LengthRegister
+	cmpq \Length1, \LengthRegister
 	jne NotEqual
 
-	// subq $0x8, %rcx
+	# Since the relative address directive counts from the initial byte
+	# we need to remove the length of quad (8 bytes) to get the proper
+	# length of string. 
+	subq $0x8, \LengthRegister
 	ForEachCharacter:
-		movb -1(\StringPointer1, %rcx), %al
-		movb -1(\StringPointer2, %rcx), %bl
-		cmpb %al, %bl
+		movb -1(\StringPointer1, \LengthRegister), %al
+		cmpb -1(\StringPointer2, \LengthRegister), %al
 		jne NotEqual
 	loop ForEachCharacter
 
 	jmp CompareStringDone
 	NotEqual:
-		movq $0x1, %rax
+		movq $0x1, \ResultRegister
 
 	CompareStringDone:
 .endm
@@ -62,7 +64,7 @@ DummyWordsEnd:
 
 		# Move 8 bytes (a quad) to align to the starting of string
 		addq $0x8, %r14
-		CompareString %r14, \GivenStringPattern, -8(%r14), \GivenStringPatternLength
+		CompareString %rcx, %rax, %r14, \GivenStringPattern, -8(%r14), \GivenStringPatternLength
 		subq $0x8, %r14
 
 		# Move to definition, await for branching

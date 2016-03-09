@@ -28,7 +28,6 @@ _main:
 
 
 	addq $(0x8), %r12
-	// DisplayUserLexus %r12, -8(%r12)
 	LookUpDummyWords %r12, -8(%r12)
 	subq $(0x8), %r12
 	ExitProgram	
