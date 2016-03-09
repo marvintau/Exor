@@ -34,7 +34,7 @@ DummyWordsEnd:
 	cmpq \Length1, %rcx
 	jne NotEqual
 
-	subq $0x8, %rcx
+	// subq $0x8, %rcx
 	ForEachCharacter:
 		movb -1(\StringPointer1, %rcx), %al
 		movb -1(\StringPointer2, %rcx), %bl
@@ -62,7 +62,6 @@ DummyWordsEnd:
 
 		# Move 8 bytes (a quad) to align to the starting of string
 		addq $0x8, %r14
-		// DisplayUserLexus %r12, -8(%r12)
 		CompareString %r14, \GivenStringPattern, -8(%r14), \GivenStringPatternLength
 		subq $0x8, %r14
 
