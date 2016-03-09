@@ -86,7 +86,7 @@ Display\Label:
 	movl	$SyscallDisplay, %eax
 	movl	$(1), %edi
 	movq	\address, %rsi
-	movzbq	\length, %rdx
+	movq	\length, %rdx
 	syscall
 
 	DisplayStringConstant Return, "\n"
@@ -100,13 +100,22 @@ Display\Label:
 	addq	UserLexusOffset(%rip), %r13
 
 	ForAllDelimiters:
-	pushq	%rcx
+		pushq	%rcx
+		
 		\Action %r13, (%r12)
-		movzbq (%r12), %r15		# move delimiter interval pointed by %r12 to %r15
-		incq %r15				# increase the delimiter to omit the space
-		addq %r15, %r13			# add the increment of pointer to buffer pointer
-		incq %r12				# move to next delimiter interval
-	popq	%rcx
+
+		# Fetch the offset from the UserLexus table
+		# (the table records the offset of each word)
+		# increase with 1 to omit the space, and then
+		# add to the overall offset.
+		movzbq (%r12), %r15
+		incq %r15
+		addq %r15, %r13
+
+		# Move to the next word offset
+		incq %r12
+
+		popq %rcx
 	loop ForAllDelimiters
 .endm
 

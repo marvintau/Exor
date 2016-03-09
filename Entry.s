@@ -5,6 +5,11 @@
  */
 
 .section __DATA, __data
+String1:
+	.quad (String1End - .)
+	.ascii "Adam"
+String1End:
+
 .include "DataSegment.s"
 .include "ExorMacros.s"
 
@@ -18,23 +23,12 @@
 FindEntry:
 
 _main:
-
-	// cld
-
-	// pushq	%rbp
-	// movq	%rsp, %rbp
-
 	
-	// ScanStringBuffer
-	// ParseStringBuffer
-	// EvaluateUserLexusWith DisplayUserLexus
-	// popq	%rbp
+	leaq String1(%rip), %r12
 
-	// CompareString string1, string2, stringLength
-	// je Equal
-	// DisplayStringConstant haha, "Not Equal"
-	
-	// Equal:
-	// 	DisplayStringConstant hehe, "Equal"
-	CompareAllDummyWords
+
+	addq $(0x8), %r12
+	// DisplayUserLexus %r12, -8(%r12)
+	LookUpDummyWords %r12, -8(%r12)
+	subq $(0x8), %r12
 	ExitProgram	

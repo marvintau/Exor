@@ -19,51 +19,68 @@ DummyWords:
 DummyWordsEnd:
 .section __TEXT, __text
 
-# Iterates over two strings with same length, exits once
-# difference is found, or no differences found.
-# AFFECTED REGISTERS: al(rax), rcx, r12, r13
+# Compare two strings. First check if the strings have equal length,
+# then check if any different char exists. The piece of code doesn't
+# affected the referred address registers except the counter.
+
+# The lengths are typically passed as register. Thus no more indirect
+# addressing needed.
+
+# AFFECTED REGISTERS: rax, rcx
 # AFFECTED FLAGS: ZF
-.macro CompareString StringPointer1, StringPointer2, Length
+.macro CompareString StringPointer1, StringPointer2, Length1, Length2
 
-	pushq %r12
-	pushq %r13
+	movq \Length2, %rcx
+	cmpq \Length1, %rcx
+	jne NotEqual
 
-	movq \Length(%rip), %rcx
-	leaq \StringPointer1(%rip), %r12
-	leaq \StringPointer2(%rip), %r13
-
+	subq $0x8, %rcx
 	ForEachCharacter:
-		movb -1(%r12, %rcx), %al
-		cmpb -1(%r13, %rcx), %al
-		jne Done
+		movb -1(\StringPointer1, %rcx), %al
+		movb -1(\StringPointer2, %rcx), %bl
+		cmpb %al, %bl
+		jne NotEqual
 	loop ForEachCharacter
-	Done:
 
-	popq  %r12
-	popq  %r13
+	jmp CompareStringDone
+	NotEqual:
+		movq $0x1, %rax
+
+	CompareStringDone:
 .endm
 
-# Compares two length stored in memory
-# AFFECTED FLAGS: ZF
-.macro CompareLength Length1, Length2
-	cmpq \Length1(%rip), \Length2(%rip)	
-.endm
-
-.macro CompareAllDummyWords
+# Look up the dummy words table for the given word
+.macro LookUpDummyWords GivenStringPattern, GivenStringPatternLength
 	
-	pushq %r12
-	pushq %r13
-
-	leaq DummyWords(%rip), %r12
+	# DummyWords table begins with the length of first entry word
+	leaq DummyWords(%rip), %r14
 
 	ForEachEntry:
-		movzwq (%r12), %r13
-		cmpq $(0xbeef), %r13 # should be stop
-		je ForEachEntryDone
-		inc %r12
-	jmp ForEachEntry
-	ForEachEntryDone:
+		# Check if proceeded to the end of table
+		cmpw $(0xbeef), (%r14)
+		je LookUpDone
 
-	popq %r12
-	popq %r13
+		# Move 8 bytes (a quad) to align to the starting of string
+		addq $0x8, %r14
+		// DisplayUserLexus %r12, -8(%r12)
+		CompareString %r14, \GivenStringPattern, -8(%r14), \GivenStringPatternLength
+		subq $0x8, %r14
+
+		# Move to definition, await for branching
+		addq (%r14), %r14
+
+		dec %rax
+		je NotMatching
+
+		Matching:
+			addq $0x8, %r14
+			DisplayUserLexus %r14, -8(%r14)
+			subq $0x8, %r14
+		NotMatching:
+			# Jump to the next entry
+			addq (%r14), %r14
+
+	jmp ForEachEntry
+	LookUpDone:
+
 .endm
