@@ -24,7 +24,7 @@ Display\Label:
 	leaq	StringBuffer(%rip), %rsi
 	movq	$(StringBufferEnd - StringBuffer), %rdx
 	syscall
-	decq	%rax  # for ommitting the final enter key
+	decq	%rax  // for ommitting the final enter key
 	movq	%rax, StringBufferLength(%rip)
 .endm
 
@@ -64,7 +64,7 @@ Display\Label:
 			ContinueCheckDelimiters:
 				cmpb $(0x00), (%r14)
 				je FinishedCheck
-				# Otherwise, 
+				// Otherwise, 
 					incq %r14
 					incq (%r13)
 
@@ -76,7 +76,7 @@ Display\Label:
 
 	cmpq $(0x00), (%r14)
 	je NotAddRemainingOne
-	# Add Remaining one:
+	// Add Remaining one:
 		incq (%r13)
 	NotAddRemainingOne:
 .endm
@@ -104,15 +104,15 @@ Display\Label:
 		
 		\Action %r13, (%r12)
 
-		# Fetch the offset from the UserLexus table
-		# (the table records the offset of each word)
-		# increase with 1 to omit the space, and then
-		# add to the overall offset.
+		// Fetch the offset from the UserLexus table
+		// (the table records the offset of each word)
+		// increase with 1 to omit the space, and then
+		// add to the overall offset.
 		movzbq (%r12), %r15
 		incq %r15
 		addq %r15, %r13
 
-		# Move to the next word offset
+		// Move to the next word offset
 		incq %r12
 
 		popq %rcx
