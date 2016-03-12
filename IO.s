@@ -84,9 +84,8 @@
 	ForAllDelimiters:
 		push %rcx
 
-
 		call \ActionLabel
-		Print %r13, (%r12)
+
 		// Fetch the offset from the UserLexus table
 		// (the table records the offset of each word)
 		// increase with 1 to omit the space, and then

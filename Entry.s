@@ -17,12 +17,17 @@ FindEntry:
 	LookUpEntry %r13, (%r12)
 	ret
 
-
-_main:
-	
+MainRoutine:
 	ScanInputBuffer
 	ParseInputBuffer
 	EvaluateUserLexusWith FindEntry
+	ret	
+
+_main:
+
+MainLoop:
+	call MainRoutine
+	loop MainLoop
 
 	ExitProgram	
 
