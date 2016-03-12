@@ -2,42 +2,26 @@
 .set SyscallDisplay,	0x2000004
 .set SyscallRead,		0x2000003
 
-.macro DisplayStringConstant Label, String
-	.data
-\Label:
-	.ascii "\String"
-Size\Label:
-	.quad . - \Label
-
-	.text
-Display\Label:
-	movl	$SyscallDisplay, %eax
-	movl	$1, %edi
-	movq	\Label@GOTPCREL(%rip), %rsi
-	movq	Size\Label(%rip), %rdx
-	syscall
-.endm
-
-.macro ScanStringBuffer
+.macro ScanInputBuffer
 	movl	$SyscallRead, %eax
 	movl	$(1), %edi
-	leaq	StringBuffer(%rip), %rsi
-	movq	$(StringBufferEnd - StringBuffer), %rdx
+	leaq	InputBuffer(%rip), %rsi
+	movq	$(InputBufferEnd - InputBuffer), %rdx
 	syscall
 	decq	%rax  // for ommitting the final enter key
-	movq	%rax, StringBufferLength(%rip)
+	movq	%rax, InputBufferLength(%rip)
 .endm
 
-.macro ParseStringBuffer
+.macro ParseInputBuffer
 	
-	movq	StringBufferLength(%rip), %rcx
-	leaq	StringBuffer(%rip), %r12
+	movq	InputBufferLength(%rip), %rcx
+	leaq	InputBuffer(%rip), %r12
 	leaq	UserLexusLength(%rip), %r13
 	leaq	UserLexus(%rip), %r14
 	leaq 	UserLexusOffset(%rip), %r15
 	movq 	$(0x00), %rdx
 
-	ForAllCharactersInStringBuffer:
+	ForAllCharactersInInputBuffer:
 		cmpb $(0x20), (%r12)
 		jne IncreaseCurrentDelimiterInterval
 		je  CreateNewDelimiterInterval
@@ -72,7 +56,7 @@ Display\Label:
 
 		incq %r12
 
-	loop ForAllCharactersInStringBuffer
+	loop ForAllCharactersInInputBuffer
 
 	cmpq $(0x00), (%r14)
 	je NotAddRemainingOne
@@ -82,28 +66,27 @@ Display\Label:
 .endm
 
 
-.macro DisplayUserLexus address, length
-	movl	$SyscallDisplay, %eax
-	movl	$(1), %edi
+.macro Print address, length
+	movq	$SyscallDisplay, %rax
+	movq	$1, %rdi
 	movq	\address, %rsi
-	movq	\length, %rdx
+	movzbq	\length, %rdx
 	syscall
-
-	// DisplayStringConstant Return, "\n"
 .endm
 
-.macro EvaluateUserLexusWith Action
+.macro EvaluateUserLexusWith ActionLabel
 	movq	UserLexusLength(%rip), %rcx
 	leaq	UserLexus(%rip), %r12
-	leaq	StringBuffer(%rip), %r13
+	leaq	InputBuffer(%rip), %r13
 
 	addq	UserLexusOffset(%rip), %r13
 
 	ForAllDelimiters:
-		pushq	%rcx
-		
-		\Action %r13, (%r12)
+		push %rcx
 
+
+		call \ActionLabel
+		Print %r13, (%r12)
 		// Fetch the offset from the UserLexus table
 		// (the table records the offset of each word)
 		// increase with 1 to omit the space, and then
@@ -115,12 +98,12 @@ Display\Label:
 		// Move to the next word offset
 		incq %r12
 
-		popq %rcx
+		pop %rcx
 	loop ForAllDelimiters
 .endm
 
 
 .macro ExitProgram
-	movl $SyscallExit, %eax
+	movq $SyscallExit, %rax
 	syscall
 .endm

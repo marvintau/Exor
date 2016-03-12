@@ -4,30 +4,27 @@
  *  Containing learning notes and resources
  */
 
-.section __DATA, __data
-String1:
-	.quad (String1End - .)
-	.ascii "Adam"
-String1End:
-
-.include "DataSegment.s"
-.include "ExorMacros.s"
-
-
 .section __TEXT, __text
+.include "ExorMacros.s"
 .include "IO.s"
 
-
 .globl _main
+PrintWord:
+	Print %r13, (%r12)
+	ret
 
 FindEntry:
+	LookUpEntry %r13, (%r12)
+	ret
+
 
 _main:
 	
-	leaq String1(%rip), %r12
+	ScanInputBuffer
+	ParseInputBuffer
+	EvaluateUserLexusWith FindEntry
 
-
-	addq $(0x8), %r12
-	LookUpDummyWords %r12, -8(%r12)
-	subq $(0x8), %r12
 	ExitProgram	
+
+.section __DATA, __data
+.include "DataSegment.s"

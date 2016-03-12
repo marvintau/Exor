@@ -1,6 +1,6 @@
 
-// Used by ParseStringBuffer
-// The length should always be the half of StringBuffer
+// UserLexus is a region that stores the
+// offset of each word in the string buffer
 UserLexusOffset:
 	.quad	0
 UserLexusLength:
@@ -9,9 +9,16 @@ UserLexus:
 	.fill	128, 1, 0x00
 UserLexusEnd:
 
-// Used by ScanStringBuffer
-StringBufferLength:
+// Used by ScanInputBuffer
+InputBufferLength:
 	.quad	0
-StringBuffer:
+InputBuffer:
 	.fill 	256, 1, 0x00 
-StringBufferEnd:
+InputBufferEnd:
+
+DummyWords:
+	DefineDummyWord God, "He Is Who He Is\n"
+	DefineDummyWord Adam, "First created man\n"
+	DefineDummyWord Eve, "First created woman"
+	.word 0xbeef 
+DummyWordsEnd:
