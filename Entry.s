@@ -5,31 +5,29 @@
  */
 
 .section __TEXT, __text
+.include "ScanBuffer.s"
 .include "ExorMacros.s"
+.include "LexTable.s"
 .include "IO.s"
 
 .globl _main
+
 PrintWord:
-	Print %r13, (%r12)
+	Print %r15, %r14
 	ret
 
 FindEntry:
-	LookUpEntry %r13, (%r12)
+	LookUpEntryWithStringOffsetReg %r15, AndLengthReg, %r14, WithEntryReg, %r13, UsingCondReg, %r12
 	ret
-
-MainRoutine:
-	ScanInputBuffer
-	ParseInputBuffer
-	EvaluateUserLexusWith FindEntry
-	ret	
 
 _main:
 
-MainLoop:
-	call MainRoutine
-	loop MainLoop
+	ScanInputBuffer
+	
+	Apply FindEntry, WithOffsetOf, %r15, AndLengthof, %r14
 
-	ExitProgram	
+	movq $SyscallExit, %rax
+	syscall
 
 .section __DATA, __data
 .include "DataSegment.s"

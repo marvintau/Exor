@@ -1,24 +1,25 @@
-
-// UserLexus is a region that stores the
-// offset of each word in the string buffer
-UserLexusOffset:
-	.quad	0
-UserLexusLength:
-	.quad	0
-UserLexus:
-	.fill	128, 1, 0x00
-UserLexusEnd:
-
-// Used by ScanInputBuffer
 InputBufferLength:
 	.quad	0
 InputBuffer:
-	.fill 	256, 1, 0x00 
+	.fill 	64, 1, 0x20 
 InputBufferEnd:
 
-DummyWords:
-	DefineDummyWord God, "He Is Who He Is\n"
-	DefineDummyWord Adam, "First created man\n"
-	DefineDummyWord Eve, "First created woman"
+.macro String name, content
+	\name:
+		.quad(End\name - Start\name)
+	Start\name:
+		.ascii "\content"
+	End\name:
+.endm
+
+.macro Entry name, definition
+	String Entry\name, "\name"
+	String Def\name, "\definition"
+.endm
+
+Entries:
+	Entry Adam, "First created man\n"
+	Entry Eve, "First created woman\n"
+	Entry God, "He Is Who He Is\n"
 	.word 0xbeef 
-DummyWordsEnd:
+EntriesEnd:

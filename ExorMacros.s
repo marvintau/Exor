@@ -1,36 +1,31 @@
-.macro DefineDummyWord name explanation
-DummyWord\name:
-	.quad (EndDummyWord\name - .)
-	.ascii "\name"
-EndDummyWord\name:
-
-ExplainLabel\name:
-	.quad (EndExplainLabel\name - .)
-	.ascii "\explanation"
-EndExplainLabel\name:
+.macro MoveNextString WithOffsetReg, Reg
+	addq (\Reg), \Reg
+	addq $0x8,   \Reg
 .endm
 
-// Compare two strings. First check if the strings have equal length,
-// then check if any different char exists. The piece of code doesn't
-// affected the referred address registers except the counter.
+.macro ApplyString OverOffsetReg, Reg, With, Action
+	addq $0x8, \Reg
+	\Action \Reg, -8(\Reg)
+	subq $0x8, \Reg
+.endm
 
-// The lengths are typically passed as register. Thus no more indirect
-// addressing needed.
+# Compare two strings. First check if the strings have equal
+# length, then check if any different char exists. The piece
+# of code doesn't affected the referred address registers
+# except the counter.
 
-// AFFECTED REGISTERS: rax, rcx
-// AFFECTED FLAGS: ZF
-.macro CompareString Length, Result, Str1, Len1, Str2, Len2
+.macro Compare StrOff1, StrLen1, AndString, StrOff2, StrLen2, StoringCondAt, Result
 
-	movq \Len1, \Length
-	subq $0x8,  \Length
-	cmpq \Len2, \Length
+	push %rcx
+
+	movq \StrLen1, %rcx
+	cmpq \StrLen2, %rcx
 	jne NotEqual
 
-	// Macro counts the length of the bytes indicating the length
-	// Subtract it to get the proper string length.
 	ForEachCharacter:
-		movb -1(\Str1, \Length), %al
-		cmpb -1(\Str2, \Length), %al
+		
+		movb -0x1(\StrOff1, %rcx), %al
+		cmpb -0x1(\StrOff2, %rcx), %al
 		jne NotEqual
 	loop ForEachCharacter
 
@@ -39,52 +34,45 @@ EndExplainLabel\name:
 		movq $0x1, \Result
 
 	CompareStringDone:
+	pop %rcx
 .endm
 
-.macro CompareEntry Length, Result, Entry, StrPattern, StrLen
-	addq $0x8, \Entry
-	CompareString \Length, \Result, \Entry, -8(\Entry), \StrPattern, \StrLen
-	subq $0x8, \Entry
+.macro CompareEntryWith EntryReg, AndStringWithOffset, OffsetReg, AndLength, StrLenReg, StoringCondAt, CondReg
+	addq $0x8, \EntryReg
+	Compare \OffsetReg, \StrLenReg, AndString, \EntryReg, -8(\EntryReg), StoringCondAt, \CondReg
+	subq $0x8, \EntryReg
 .endm
 
-.macro ApplyDefinitionWith Cond, Action
-	// Move to defintiion
-	addq (%r14), %r14
+.macro ApplyDefinitionWith Action, BySatisfying, Cond, AtEntryReg, EntryReg
 
+	MoveNextString WithOffsetReg, \EntryReg
+		
 	dec \Cond
 	je NotMatching
 
 	Matching:
-		addq $0x8, %r14
-		\Action %r14, -8(%r14)
-		subq $0x8, %r14
+		ApplyString OverOffsetReg, \EntryReg, With, \Action
 	NotMatching:
-		addq (%r14), %r14
+		MoveNextString WithOffsetReg, \EntryReg
 
-		// Jump to the next entry
 .endm
 
-// Look up the dummy words table for the given word
-.macro LookUpEntry StrPattern, StrLen
-	push %r14
-	push %rax
-	push %rdx
+# Look up the dummy words table for the given word
+.macro LookUpEntryWithStringOffsetReg OffsetReg, AndLengthReg, LengthReg, WithEntryReg, EntryReg, UsingCondReg, CondReg
 	
-	leaq DummyWords(%rip), %r14
+	leaq Entries(%rip), \EntryReg
 
 	ForEachEntry:
-		// Check if proceeded to the end of table
-		cmpw $(0xbeef), (%r14)
+
+		# Check if proceeded to the end of table
+		cmpw $(0xbeef), (\EntryReg)
 		je LookUpDone
 
-		CompareEntry %rdx, %rax, %r14, \StrPattern, \StrLen
+		CompareEntryWith \EntryReg, AndStringWithOffset, \OffsetReg, AndLength, \LengthReg, StoringCondAt, \CondReg
 
-		ApplyDefinitionWith %rax, Print
-
+		ApplyDefinitionWith Print, BySatisfying, \CondReg, AtEntryReg, \EntryReg
+		# MoveNext %r14
 	jmp ForEachEntry
 	LookUpDone:
 
-	pop %rdx
-	pop %rax
-	pop %r14
 .endm
