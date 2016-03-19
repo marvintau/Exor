@@ -5,9 +5,8 @@
  */
 
 .section __TEXT, __text
-.include "ScanBuffer.s"
-.include "ExorMacros.s"
-.include "LexTable.s"
+.include "Dictionary.s"
+.include "Lexer.s"
 .include "IO.s"
 
 .globl _main
@@ -16,15 +15,15 @@ PrintWord:
 	Print %r15, %r14
 	ret
 
-FindEntry:
-	LookUpEntryWithStringOffsetReg %r15, AndLengthReg, %r14, WithEntryReg, %r13, UsingCondReg, %r12
+Find:
+	FindEntry %r15, %r14, %r13, %r12
 	ret
 
 _main:
 
 	ScanInputBuffer
 	
-	Apply FindEntry, WithOffsetOf, %r15, AndLengthof, %r14
+	Apply Find, WithOffsetOf, %r15, AndLengthof, %r14
 
 	movq $SyscallExit, %rax
 	syscall

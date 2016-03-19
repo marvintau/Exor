@@ -1,6 +1,4 @@
-# SanityCheck
-
-Begin to implement the dictionary structure
+# Begin to implement a basic dictionary structure [DONE]
 
 Problem: __unable to move syscall out of main__
          The problem caused by using $1 as the placeholder of the macro 
@@ -9,3 +7,32 @@ Problem: __unable to move syscall out of main__
 
 Problem: __Something wrong with loading the string length from memory__
          No problem with compiling, just giving no result. While no problem when passing an immediate number to register.
+
+# Improve the dictionary structure to make it store data
+
+1. __Change the Dictionary into a linked list structure__
+   a. Create a new quadword to store the next entry address. Since it's
+      not possible to access the absolute address, we use the initial
+      address of Dictionary and offset to represent an entry address.
+
+      **EVERYTHING BELOW IS WRONG.**
+
+   b. For macro definition in compiling time, we may build up macro like
+      
+      .macro Entry name, definition
+         Address:
+   
+            .quad (NextAddress - Dictionary)
+         String Entry\name, "\name"
+         String Def\name, "\definition"
+   
+         NextAddress:
+      .endm
+
+      So you need to change the jumping, especially the "MoveNext" routine
+      to make it jump to proper address by taking the address, instead of 
+      move by adding a length of string.
+
+   c. When we are going to implement the "define" word, which means we are
+      going to add new entries at runtime, we have the problem, because we
+      don

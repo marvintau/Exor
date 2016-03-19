@@ -18,8 +18,9 @@ InputBufferEnd:
 .endm
 
 Entries:
+	Entry God, "He Is Who He Is\n"
+	Entry Jesus, "Beloved Son\n"
 	Entry Adam, "First created man\n"
 	Entry Eve, "First created woman\n"
-	Entry God, "He Is Who He Is\n"
 	.word 0xbeef 
 EntriesEnd:

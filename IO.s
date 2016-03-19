@@ -29,14 +29,6 @@
 	pop  %rcx
 .endm
 
-.macro PrintBuffer address, length
-	movq	$SyscallDisplay, %rax
-	movq	$1, %rdi
-	movq	\address, %rsi
-	movq	\length, %rdx
-	syscall
-.endm
-
 .macro ExitProgram
 	
 .endm

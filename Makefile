@@ -1,4 +1,4 @@
-all: Entry.s
+all: Main.s
 	cc  $^ -lc -o exor
 	otool -tV exor
 	otool -d exor
