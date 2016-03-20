@@ -19,16 +19,3 @@
 	popq	%rdi
 	popq	%rax
 .endm
-
-.macro PrintReg Reg
-	push %rcx
-	leaq Number(%rip), %rdi
-	movq \Reg, %rsi
-	movb $0, %al
-	call _printf	
-	pop  %rcx
-.endm
-
-.macro ExitProgram
-	
-.endm

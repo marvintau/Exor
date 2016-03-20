@@ -16,14 +16,15 @@ PrintWord:
 	ret
 
 Find:
-	FindEntry %r15, %r14, %r13, %r12
+	FindEntry %r15, %r14, %r13, %r12, %r11
 	ret
 
 _main:
 
-	ScanInputBuffer
-	
-	Apply Find, WithOffsetOf, %r15, AndLengthof, %r14
+	ScanInputBuffer	
+	ApplyToUserInputWith Find, WithOffsetOf, %r15, AndLengthof, %r14
+
+	// call Find
 
 	movq $SyscallExit, %rax
 	syscall

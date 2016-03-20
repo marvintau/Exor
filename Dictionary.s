@@ -1,7 +1,51 @@
-.macro MoveNext Reg
-	addq (\Reg), \Reg
-	addq $0x8,   \Reg
+# Now that the EntryReg is pointing to the first entry,
+# The DictReg should not be used through the whole loop.
+.macro InitDictionary EntryAddrReg, DictAddrReg
+	leaq DictStart(%rip), \EntryAddrReg
+	leaq DictEnd(%rip), \DictAddrReg
+
+	MoveToNextEntry \EntryAddrReg, \DictAddrReg
+	# Now it points to the first entry in Dictionary.
 .endm
+
+
+# Jumps from the beginning of entry to the place where the
+# definition starts.
+.macro MoveToDef EntryReg
+	addq (\EntryReg), \EntryReg
+	addq $0x8,   \EntryReg
+.endm
+
+.macro MoveToNextEntry EntryReg, DictReg
+	
+	movq -8(\EntryReg), \EntryReg
+	leaq (\DictReg, \EntryReg), \EntryReg
+
+.endm
+
+# Apply operations over definitions with checking conditions
+# Since the next entry can only be located with the address
+# stored in EntryReg when entering the routine. Push it into
+# stack before modify it.
+.macro ApplyToDefWith Action, Cond, EntryReg, DictReg
+
+	push \EntryReg
+	MoveToDef \EntryReg
+		
+	dec \Cond
+	je NotMatching
+
+	Matching:
+		ApplyString \EntryReg, With, \Action
+	NotMatching:
+		pop \EntryReg
+		MoveToNextEntry \EntryReg, \DictReg
+
+.endm
+# How to test the function above:
+# Just run it in a loop that iterate over whole dictionary,
+# with outputing each entry.
+# =========================================================
 
 .macro ApplyString Reg, With, Action
 	addq $0x8, \Reg
@@ -22,14 +66,13 @@
 	cmpq \StrLen2, %rcx
 	jne NotEqual
 
-	ForEachCharacter:
-		
+	ForEachCharacter:		
 		movb -0x1(\StrOff1, %rcx), %al
 		cmpb -0x1(\StrOff2, %rcx), %al
 		jne NotEqual
 	loop ForEachCharacter
+		jmp CompareStringDone
 
-	jmp CompareStringDone
 	NotEqual:
 		movq $0x1, \ResultCond
 
@@ -37,40 +80,26 @@
 	pop %rcx
 .endm
 
-.macro CompareEntryWith EntryReg, OffsetReg, StrLenReg, CondReg
+.macro CompareEntryWith EntryReg, StrAddrReg, StrLenReg, CondReg
 	addq $0x8, \EntryReg
-	Compare \OffsetReg, \StrLenReg, \EntryReg, -8(\EntryReg), \CondReg
+	Compare \StrAddrReg, \StrLenReg, \EntryReg, -8(\EntryReg), \CondReg
 	subq $0x8, \EntryReg
 .endm
 
-.macro ApplyDefinition Action, Cond, EntryReg
-
-	MoveNext \EntryReg
-		
-	dec \Cond
-	je NotMatching
-
-	Matching:
-		ApplyString \EntryReg, With, \Action
-	NotMatching:
-		MoveNext \EntryReg
-
-.endm
-
 # Look up the dummy words table for the given word
-.macro FindEntry OffsetReg, LengthReg, EntryReg, CondReg
-	
-	leaq Entries(%rip), \EntryReg
+.macro FindEntry StrAddrReg, LengthReg, EntryReg, DictReg, CondReg
+
+	InitDictionary \EntryReg, \DictReg
 
 	ForEachEntry:
 
 		# Check entry table end
-		cmpw $(0xbeef), (\EntryReg)
+		cmpq $(0x0), (\EntryReg)
 		je LookUpDone
 
-		CompareEntryWith \EntryReg, \OffsetReg, \LengthReg, \CondReg
+		CompareEntryWith \EntryReg, \StrAddrReg, \LengthReg, \CondReg
 
-		ApplyDefinition Print, \CondReg, \EntryReg
+		ApplyToDefWith Print, \CondReg, \EntryReg, \DictReg
 	jmp ForEachEntry
 	LookUpDone:
 

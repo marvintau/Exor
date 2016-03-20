@@ -18,25 +18,25 @@
 .endm
 
 
-.macro Prepare OffsetReg, LengthReg, For, Action
-	push \OffsetReg
+.macro Prepare StrAddrReg, LengthReg, For, Action
+	push \StrAddrReg
 	push \LengthReg
 
-	subq \LengthReg, \OffsetReg
+	subq \LengthReg, \StrAddrReg
 	incq \LengthReg
 	call \Action
 
 	popq \LengthReg
-	popq \OffsetReg
+	popq \StrAddrReg
 .endm
 
-.macro CheckCharEdgeWith OffsetReg, LengthReg, Action
-		cmpb $(0x20), (\OffsetReg)
+.macro CheckCharEdgeWith StrAddrReg, LengthReg, Action
+		cmpb $(0x20), (\StrAddrReg)
 		je   StartWithSpace
 		jne  StartWithChar
 	
 	StartWithSpace:
-		cmpb $(0x20), 1(\OffsetReg)
+		cmpb $(0x20), 1(\StrAddrReg)
 		je   Done
 
 		ButNextIsChar:
@@ -44,7 +44,7 @@
 			jmp Done
 
 	StartWithChar:
-		cmpb $(0x20), 1(\OffsetReg)
+		cmpb $(0x20), 1(\StrAddrReg)
 		// jne  HighKeep
 		je   ButNextIsSpace
 
@@ -53,22 +53,22 @@
 			jmp  Done
 
 		ButNextIsSpace:
-			Prepare \OffsetReg, \LengthReg, For, \Action
+			Prepare \StrAddrReg, \LengthReg, For, \Action
 	Done:
-		incq \OffsetReg
+		incq \StrAddrReg
 .endm
 
-.macro Apply Action, WithOffsetOf, OffsetReg, AndLengthOf, LengthReg
+.macro ApplyToUserInputWith Action, WithOffsetOf, StrAddrReg, AndLengthOf, LengthReg
 
 	push %rcx
 	push %rax
-	leaq InputBuffer(%rip), \OffsetReg
+	leaq InputBuffer(%rip), \StrAddrReg
 	movq InputBufferLength(%rip), %rcx
 	// movq $(0x5), %rcx
 	
 	Apply_ForEachWord:
 		push %rcx
-		CheckCharEdgeWith \OffsetReg, \LengthReg, \Action
+		CheckCharEdgeWith \StrAddrReg, \LengthReg, \Action
 		popq %rcx
 		loop Apply_ForEachWord
 

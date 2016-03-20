@@ -15,24 +15,10 @@ Problem: __Something wrong with loading the string length from memory__
       not possible to access the absolute address, we use the initial
       address of Dictionary and offset to represent an entry address.
 
-      **EVERYTHING BELOW IS WRONG.**
+      _You cannot calculate the offset of the label before defined._
+      _You also cannot_ update the stored data by updating the variable you assigned to it.
 
-   b. For macro definition in compiling time, we may build up macro like
       
-      .macro Entry name, definition
-         Address:
-   
-            .quad (NextAddress - Dictionary)
-         String Entry\name, "\name"
-         String Def\name, "\definition"
-   
-         NextAddress:
-      .endm
-
-      So you need to change the jumping, especially the "MoveNext" routine
-      to make it jump to proper address by taking the address, instead of 
-      move by adding a length of string.
-
    c. When we are going to implement the "define" word, which means we are
       going to add new entries at runtime, we have the problem, because we
       don
