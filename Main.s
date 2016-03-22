@@ -21,10 +21,16 @@ Find:
 
 _main:
 
+MainLoop:
+	xorq %r15, %r15
+	xorq %r14, %r14 
+	xorq %r13, %r13
+	xorq %r12, %r12
+	xorq %r11, %r11
+
 	ScanInputBuffer	
 	ApplyToUserInputWith Find, WithOffsetOf, %r15, AndLengthof, %r14
-
-	// call Find
+	jmp MainLoop
 
 	movq $SyscallExit, %rax
 	syscall

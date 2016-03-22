@@ -20,7 +20,19 @@ Problem: __Something wrong with loading the string length from memory__
 
    [Done] A twice-addressing mechanic is implement. We setup a base address
    of dictionary, and then for each entry we use a quad to store the offset against base address. When addressing, we first load the offset into the register, and then load the address into the register with dictionary base and the offset right in the register.
-      
-   c. When we are going to implement the "define" word, which means we are
-      going to add new entries at runtime, we have the problem, because we
-      don
+
+   _Fix the problem caused by puting the main routine into the loop_
+   [Done] Clear all registers before next iteration. Remember when using xor,
+   two operands have to be identical.
+
+2. __Expand the Dictionary structure__
+   a. There will be more than one type of entry. First we have get the string
+      as the fundamental structure.
+
+   b. Secondly, we need another type of entry, which definition is composed by
+      a couple of words, that refer to other entries.
+
+   c. Thirdly, we are going have the entry that contains executable code. This 
+      requires more effort, and takes longer time to figure out a proper mechanism.
+
+   So all of them needs a mask byte that indicate its attribute. 
