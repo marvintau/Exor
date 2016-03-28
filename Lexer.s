@@ -45,7 +45,6 @@
 
 	StartWithChar:
 		cmpb $(0x20), 1(\StrAddrReg)
-		// jne  HighKeep
 		je   ButNextIsSpace
 
 		StillChar:
@@ -64,13 +63,17 @@
 	push %rax
 	leaq InputBuffer(%rip), \StrAddrReg
 	movq InputBufferLength(%rip), %rcx
-	// movq $(0x5), %rcx
+
+	// Handles zero lengthed user input
+	test %rcx, %rcx
+	je   Apply_ForEachWord_Done
 	
 	Apply_ForEachWord:
 		push %rcx
 		CheckCharEdgeWith \StrAddrReg, \LengthReg, \Action
 		popq %rcx
 		loop Apply_ForEachWord
+	Apply_ForEachWord_Done:
 
 	popq %rax
 	popq %rcx

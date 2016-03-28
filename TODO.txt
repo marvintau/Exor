@@ -35,4 +35,6 @@ Problem: __Something wrong with loading the string length from memory__
    c. Thirdly, we are going have the entry that contains executable code. This 
       requires more effort, and takes longer time to figure out a proper mechanism.
 
+   if we are going to make executable code, the first problem we need to figure out where should the instruction pointer jump to after execution. For the entry contains code, we know that after executing the code, there is nor more labels to indicate where should the IP jump to. Thus we need to specify the final destination after executing the code.
+
    So all of them needs a mask byte that indicate its attribute. 

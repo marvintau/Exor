@@ -7,9 +7,17 @@
 .section __TEXT, __text
 .include "Dictionary.s"
 .include "Lexer.s"
+.include "Stack.s"
 .include "IO.s"
 
+
 .globl _main
+
+# In order to save the number of argument and reduce the complexity
+# of the macros, we are going to make some registers for special
+# purpose, and not going to specify as arguments.
+
+# r15 and r14: Reserved for string scan. 
 
 PrintWord:
 	Print %r15, %r14
@@ -30,6 +38,9 @@ MainLoop:
 
 	ScanInputBuffer	
 	ApplyToUserInputWith Find, WithOffsetOf, %r15, AndLengthof, %r14
+
+	InitStack %r15
+
 	jmp MainLoop
 
 	movq $SyscallExit, %rax

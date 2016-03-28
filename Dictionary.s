@@ -11,16 +11,17 @@
 
 # Jumps from the beginning of entry to the place where the
 # definition starts.
+
+# In future, this part could be replaced with a different
+# table, that sorts the entries with the frequency of use.
 .macro MoveToDef EntryReg
 	addq (\EntryReg), \EntryReg
 	addq $0x8,   \EntryReg
 .endm
 
 .macro MoveToNextEntry EntryReg, DictReg
-	
 	movq -8(\EntryReg), \EntryReg
 	leaq (\DictReg, \EntryReg), \EntryReg
-
 .endm
 
 # Apply operations over definitions with checking conditions

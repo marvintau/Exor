@@ -21,6 +21,14 @@ InputBufferEnd:
 		.quad (Entry\name - DictEnd)
 .endm
 
+StackPointer:
+	.quad	0
+Stack:
+	.rept 	64
+	.quad	0
+	.endr
+StackEnd:
+
 DictEnd:
 	.quad 0x000000000000
 	Entry God, "He Is Who He Is\n"

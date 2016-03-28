@@ -4,6 +4,7 @@
 
 .macro Print address, length
 	pushq	%rax
+	pushq	%rcx
 	pushq   %rdi
 	pushq	%rsi
 	pushq	%rdx
@@ -17,5 +18,6 @@
 	popq	%rdx
 	popq	%rsi
 	popq	%rdi
+	popq	%rcx
 	popq	%rax
 .endm
