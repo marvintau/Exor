@@ -7,9 +7,11 @@
 	leaq  8(\StackReg), \StackReg
 .endm
 
-.macro PopStack StackRag, Action
+.macro PopStack StackReg, Action
 	\Action \StackRag
 	leaq  -8(\StackReg), \StackReg
 .endm
 
-.macro FindEntryThroughStack
+.macro PopStackPrint StackReg
+	PopStack \StackReg, PrintDef
+.endm

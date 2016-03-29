@@ -24,6 +24,9 @@
 
 	subq \LengthReg, \StrAddrReg
 	incq \LengthReg
+
+	movq \StrAddrReg, WordOffset(%rip)
+	movq \LengthReg, WordLength(%rip)
 	call \Action
 
 	popq \LengthReg
@@ -57,11 +60,13 @@
 		incq \StrAddrReg
 .endm
 
-.macro ApplyToUserInputWith Action, WithOffsetOf, StrAddrReg, AndLengthOf, LengthReg
+.macro Evaluate
 
 	push %rcx
-	push %rax
-	leaq InputBuffer(%rip), \StrAddrReg
+	push %r14
+	push %r15
+
+	leaq InputBuffer(%rip), %r14
 	movq InputBufferLength(%rip), %rcx
 
 	// Handles zero lengthed user input
@@ -70,11 +75,12 @@
 	
 	Apply_ForEachWord:
 		push %rcx
-		CheckCharEdgeWith \StrAddrReg, \LengthReg, \Action
+		CheckCharEdgeWith %r14, %r15, Find
 		popq %rcx
 		loop Apply_ForEachWord
 	Apply_ForEachWord_Done:
 
-	popq %rax
+	popq %r15
+	popq %r14
 	popq %rcx
 .endm

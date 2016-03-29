@@ -1,3 +1,7 @@
+WordOffset:
+	.quad   0
+WordLength:
+	.quad   0
 InputBufferLength:
 	.quad	0
 InputBuffer:
