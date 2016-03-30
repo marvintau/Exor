@@ -15,7 +15,7 @@
 	addq $0x8,   \EntryReg
 .endm
 
-.macro MoveToNextEntry EntryReg, DictReg
+.macro MoveToNextEntry EntryReg
 	push %r10
 	movq -8(\EntryReg), \EntryReg
 	leaq DictEnd(%rip, \EntryReg), %r10
@@ -27,6 +27,12 @@
 # Just run it in a loop that iterate over whole dictionary,
 # with outputing each entry.
 # =========================================================
+
+.macro PrintEntry Reg
+	addq $0x8, \Reg
+	Print \Reg, -8(\Reg)
+	subq $0x8, \Reg
+.endm
 
 .macro PrintDef Reg
 	push \Reg
@@ -75,13 +81,12 @@
 
 	push %r8
 	push %r9
-	push %r10
 	push %r12
 	push %r13
 
 	// Initialize the dictionary pointer registers.
 	leaq DictStart(%rip), %r9
-	MoveToNextEntry %r9, %r10
+	MoveToNextEntry %r9
 
 	movq WordOffset(%rip), %r13
 	movq WordLength(%rip), %r12
@@ -96,19 +101,15 @@
 		je NotMatching
 
 		Matching:
-
-			PrintDef %r9
-			// \Action  %r9
-			// ApplyString \EntryReg, With, \Action
+			PushStack %r9
 		NotMatching:
-			MoveToNextEntry %r9, %r10
+			MoveToNextEntry %r9
 
 	jmp ForEachEntry
 	LookUpDone:
 	
 	pop %r13
 	pop %r12
-	pop %r10
 	pop %r9
 	pop %r8
 

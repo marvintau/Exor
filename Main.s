@@ -24,13 +24,14 @@ Find:
 	ret
 
 _main:
+	InitStack
 
 MainLoop:
 
 	ScanInputBuffer	
 	Evaluate
 
-	// InitStack %r15
+	DepleteStack PrintDef
 
 	jmp MainLoop
 
