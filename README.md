@@ -16,7 +16,7 @@ After I read an essay, "Building a robust system", written by Gerald J Sussman, 
 
 Thus I decided to design a system, with less a priori knowledge, and takes computing resource as little as possible. It might look stupid at first, but it can grow.
 
-## 1. Ascendant
+## 2. Ascendant
 The system is largely inspired by Forth, a stack-based low-level system. Forth
 organizes the code in dictionary form (word - definition), of which the definition could be either assembly code or other words. Words are successively interpretted, but you could also define a word that determines the behaviour of interpreting following words. It's pretty much like a low-level Lisp, and could be even simpler than Lisp because it doesn't even contains parentheses, and use whitespace as the  only delimiter.
 
