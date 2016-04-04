@@ -60,7 +60,7 @@
 		incq \StrAddrReg
 .endm
 
-.macro Evaluate
+.macro Parse
 
 	push %rcx
 	push %r14

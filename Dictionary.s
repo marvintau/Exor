@@ -1,9 +1,3 @@
-# Now that the EntryReg is pointing to the first entry,
-# The DictReg should not be used through the whole loop.
-.macro InitDictionary EntryAddrReg, DictAddrReg
-	# Now it points to the first entry in Dictionary.
-.endm
-
 
 # Jumps from the beginning of entry to the place where the
 # definition starts.
@@ -37,9 +31,9 @@
 .macro PrintDef Reg
 	push \Reg
 	MoveToDef \Reg
-	addq $0x8, \Reg
+	addq $0x9, \Reg
 	Print \Reg, -8(\Reg)
-	subq $0x8, \Reg
+	subq $0x9, \Reg
 	pop \Reg
 .endm
 

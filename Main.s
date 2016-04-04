@@ -29,7 +29,7 @@ _main:
 MainLoop:
 
 	ScanInputBuffer	
-	Evaluate
+	Parse
 
 	DepleteStack PrintDef
 

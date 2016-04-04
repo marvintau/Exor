@@ -1,3 +1,7 @@
+# Needed to implement a mechanism to distinguish between different type of entries.
+   1. add one byte to indicate the type of entry, right after the link. make the "move to next entry" works properly with this. [done]
+   2. 
+
 # Begin to implement a basic dictionary structure [DONE]
 
 Problem: __unable to move syscall out of main__
