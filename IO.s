@@ -21,3 +21,22 @@
 	popq	%rcx
 	popq	%rax
 .endm
+
+.macro PrintReg Reg
+	pushq	%rax
+	pushq	%rcx
+	pushq   %rdi
+	pushq	%rsi
+	pushq	%rdx
+
+	leaq Number(%rip), %rdi
+	movq \Reg, %rsi
+	movb $0, %al
+	call _printf	
+
+	popq	%rdx
+	popq	%rsi
+	popq	%rdi
+	popq	%rcx
+	popq	%rax
+.endm

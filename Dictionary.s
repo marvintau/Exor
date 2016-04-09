@@ -12,6 +12,14 @@
 .macro MoveToNextEntry EntryReg
 	push %r10
 	movq -8(\EntryReg), \EntryReg
+	leaq DictEnd(%rip), %r10
+	leaq (%r10, \EntryReg), \EntryReg
+	// leaq DictEnd(%rip, \EntryReg), \EntryReg
+	popq %r10
+.endm
+
+.macro MoveToEntry EntryReg
+	push %r10
 	leaq DictEnd(%rip, \EntryReg), %r10
 	leaq (%r10, \EntryReg), \EntryReg
 	popq %r10
@@ -21,21 +29,6 @@
 # Just run it in a loop that iterate over whole dictionary,
 # with outputing each entry.
 # =========================================================
-
-.macro PrintEntry Reg
-	addq $0x8, \Reg
-	Print \Reg, -8(\Reg)
-	subq $0x8, \Reg
-.endm
-
-.macro PrintDef Reg
-	push \Reg
-	MoveToDef \Reg
-	addq $0x9, \Reg
-	Print \Reg, -8(\Reg)
-	subq $0x9, \Reg
-	pop \Reg
-.endm
 
 # Compare two strings. First check if the strings have equal
 # length, then check if any different char exists. The piece

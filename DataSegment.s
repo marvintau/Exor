@@ -1,3 +1,6 @@
+Number:
+	.ascii "%08X\n"
+
 WordOffset:
 	.quad   0
 WordLength:
@@ -20,14 +23,14 @@ InputBufferEnd:
 .set EntryType.WordSeq, 0x01
 
 .macro Entry name, EntryType
-	Entry\name:
+	\name:
 	String Entry\name, "\name"
 	.byte \EntryType
 .endm
 
 .macro EntryEnd name
 	EntryEndOf\name:
-		.quad (Entry\name - DictEnd)
+		.quad (\name - DictEnd)
 .endm
 
 StackPointer:
@@ -41,18 +44,32 @@ StackEnd:
 DictEnd:
 	.quad 0x000000000000
 	Entry God, EntryType.String
-		String DefGod, "He Is Who He Is\n"
+		String God, "He Is Who He Is\n"
 	EntryEnd God
 
 	Entry Jesus, EntryType.String
-		String DefJesus, "Beloved Son\n"
+		String Jesus, "Beloved Son\n"
 	EntryEnd Jesus
 
 	Entry Adam, EntryType.String
-		String DefAdam, "First created man\n"
+		String Adam, "First created man\n"
 	EntryEnd Adam
 
 	Entry Eve, EntryType.String
-		String DefEve, "First created woman\n"
+		String Eve, "First created woman\n"
 	EntryEnd Eve
+
+	Entry All, EntryType.WordSeq
+		.quad 2
+		.quad God
+		.quad Adam
+	EntryEnd All
+
+	Entry All2, EntryType.WordSeq
+		.quad 3
+		.quad Eve
+		.quad Jesus
+		.quad All
+	EntryEnd All2
+
 DictStart:

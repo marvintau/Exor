@@ -5,10 +5,10 @@
  */
 
 .section __TEXT, __text
+.include "IO.s"
 .include "Dictionary.s"
 .include "Lexer.s"
 .include "Stack.s"
-.include "IO.s"
 
 .globl _main
 
