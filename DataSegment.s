@@ -1,9 +1,9 @@
 Number:
 	.ascii "%08X\n"
 
-WordOffset:
-	.quad   0
 WordLength:
+	.quad   0
+WordOffset:
 	.quad   0
 InputBufferLength:
 	.quad	0

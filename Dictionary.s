@@ -14,7 +14,7 @@
 	movq -8(\EntryReg), \EntryReg
 	leaq DictEnd(%rip), %r10
 	leaq (%r10, \EntryReg), \EntryReg
-	// leaq DictEnd(%rip, \EntryReg), \EntryReg
+	// leaq DictEnd(\EntryReg, %rip), \EntryReg
 	popq %r10
 .endm
 
@@ -35,18 +35,22 @@
 # of code doesn't affected the referred address registers
 # except the counter.
 
-.macro Compare BuffOffReg, BuffLenReg, EntryReg, ResultCond
+.macro Compare InputBufferOffset, EntryReg, ResultCond
 
+	push %r13
 	push %rcx
+
+	leaq \InputBufferOffset, %r13
 
 	addq $0x8, \EntryReg
 
-	movq \BuffLenReg, %rcx
+	movq -8(%r13), %rcx
 	cmpq -8(\EntryReg), %rcx
 	jne NotEqual
 
+	movq (%r13), %r13
 	ForEachCharacter:		
-		movb -0x1(\BuffOffReg, %rcx), %al
+		movb -0x1(%r13, %rcx), %al
 		cmpb -0x1(\EntryReg, %rcx), %al
 		jne NotEqual
 	loop ForEachCharacter
@@ -58,7 +62,9 @@
 	CompareStringDone:
 
 	subq $0x8, \EntryReg
+
 	pop %rcx
+	pop %r13
 
 .endm
 
@@ -75,15 +81,13 @@
 	leaq DictStart(%rip), %r9
 	MoveToNextEntry %r9
 
-	movq WordOffset(%rip), %r13
-	movq WordLength(%rip), %r12
-
+	
 	ForEachEntry:
 		# Check entry table end
 		cmpq $(0x0), (%r9)
 		je LookUpDone
 
-		Compare %r13, %r12, %r9, %r8
+		Compare WordOffset(%rip), %r9, %r8
 		dec %r8
 		je NotMatching
 
