@@ -6,7 +6,7 @@
 # table, that sorts the entries with the frequency of use.
 .macro MoveToDef EntryReg
 	addq (\EntryReg), \EntryReg
-	addq $0x8,   \EntryReg
+	addq $0x9,   \EntryReg
 .endm
 
 .macro MoveToNextEntry EntryReg
@@ -92,6 +92,9 @@
 		je NotMatching
 
 		Matching:
+			// Sanity check:
+			// %r9 stores the intiial address of an entry
+			// which points to the first byte of length quad
 			PushStack %r9
 		NotMatching:
 			MoveToNextEntry %r9

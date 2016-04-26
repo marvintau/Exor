@@ -7,13 +7,6 @@
 	subq $0x8, \Reg
 .endm
 
-.macro PrintDef Reg
-	MoveToDef \Reg
-	addq $0x9, \Reg
-	Print \Reg, -8(\Reg)
-	subq $0x9, \Reg
-.endm
-
 
 // For stack operations, only two registers are used in each
 // macro functions. %r15 stores the stack address, while %r14
@@ -97,25 +90,34 @@ TraverseDefinition:
 	ret
 
 
-.macro Execute Reg, Action
+.macro Execute Reg
 	
+	// Sanity check:
+	// the \Reg still holds the address of initial byte
+	// of the length quad.
 	movq (\Reg), %r13
 	cmpb $(0x00), 8(\Reg, %r13)
-	// Now %r13 is no more useful
 
-	je StringConfirmed
-	jne WordSeqConfirmed
+	je ExecuteCode
+	jne ExecuteWord
 
-	StringConfirmed:
-		\Action \Reg
-		jmp ConfirmedDone
-	WordSeqConfirmed:
+	ExecuteCode:
+		MoveToDef \Reg
+		AfterMoveToDef:
+		// When we are about to jump to the code in the
+		// definition, first we need to move the reg to
+		// the starting byte of code, located at X of:
+		// V(\Reg)
+		// |8:Len|Len:Name|1:type|X.....
+		jmpq *\Reg
+		jmp ExecuteDone
+	ExecuteWord:
 		// TraverseDef \Reg, \Action
 		call TraverseDefinition
-	ConfirmedDone:
+	ExecuteDone:
 
 .endm
 
 Execute:
-	Execute %r14, PrintDef
+	Execute %r14
 	ret
