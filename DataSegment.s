@@ -6,9 +6,9 @@ WordLength:
 WordOffset:
 	.quad   0
 InputBufferLength:
-	.quad	4
+	.quad	0
 InputBuffer:
-	.ascii "All "
+	// .ascii "a"
 	.fill 	64, 1, 0x20 
 InputBufferEnd:
 

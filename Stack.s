@@ -46,11 +46,19 @@
 	push %r15
 	push %r14
 	leaq Stack(%rip), %r15
+
+	//Check emptiness
+	movq StackPointer(%rip), %r14
+	cmpq %r15, %r14
+	je DepleteStack_ForEachElem_Done
+
 	DepleteStack_ForEachElem:
 		PopStack \Action
 		movq StackPointer(%rip), %r14
 		cmpq %r15, %r14
-	jne DepleteStack_ForEachElem
+		jne DepleteStack_ForEachElem
+
+	DepleteStack_ForEachElem_Done:
 
 	pop  %r14
 	pop  %r15

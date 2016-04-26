@@ -21,6 +21,9 @@
 
 # r15 and r14: Reserved for string scan. 
 
+PrintString:
+	Print %r13, -8(%r13)
+	ret
 
 Find:
 	FindEntry
@@ -29,14 +32,14 @@ Find:
 _main:
 	InitStack
 
-// MainLoop:
+MainLoop:
 
-	// ScanInputBuffer	
+	ScanInputBuffer	
 	Parse
 
-	DepleteStack PrintDef
+	DepleteStack
 
-	// jmp MainLoop
+	jmp MainLoop
 
 	movq $SyscallExit, %rax
 	syscall
@@ -68,7 +71,7 @@ _main:
 		Skipped\name:
 			push %r13
 			leaq Start\name(%rip), %r13
-			Print %r13, -8(%r13)
+			call PrintString
 			pop  %r13
 			jmp ExecuteDone
 	EntryEnd \name
@@ -78,15 +81,11 @@ DictEnd:
 	.quad 0x000000000000
 	StringDisplay God, "HE IS WHO HE IS\n"
 
-	Entry Jesus, EntryType.Code
-		String Jesus, "Beloved Son\n"
-	EntryEnd Jesus
+	StringDisplay Jesus, "BELOVED SON\n"
 
-	StringDisplay Adam, "First created man\n"
+	StringDisplay Adam, "FIRST CREATED MAN\n"
 
-	Entry Eve, EntryType.Code
-		String Eve, "First created woman\n"
-	EntryEnd Eve
+	StringDisplay Eve, "FIRST CREATED WOMAN\n"
 
 	Entry All, EntryType.WordSeq
 		.quad 2
