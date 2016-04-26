@@ -35,6 +35,22 @@
 # of code doesn't affected the referred address registers
 # except the counter.
 
+.macro CompareLen BuffReg, EntryReg, DoneLabel
+	movq -8(\BuffReg), %rcx
+	cmpq (\EntryReg), %rcx
+	jne \DoneLabel
+
+.endm
+
+.macro CompareChar BuffReg, EntryReg, DoneLabel
+	movq (\BuffReg), \BuffReg
+	ForEachCharacter:		
+		movb -1(\BuffReg, %rcx), %al
+		cmpb  7(\EntryReg, %rcx), %al
+		jne \DoneLabel
+	loop ForEachCharacter
+.endm
+
 .macro Compare InputBufferOffset, EntryReg, ResultCond
 
 	push %r13
@@ -42,26 +58,9 @@
 
 	leaq \InputBufferOffset, %r13
 
-	addq $0x8, \EntryReg
-
-	movq -8(%r13), %rcx
-	cmpq -8(\EntryReg), %rcx
-	jne NotEqual
-
-	movq (%r13), %r13
-	ForEachCharacter:		
-		movb -0x1(%r13, %rcx), %al
-		cmpb -0x1(\EntryReg, %rcx), %al
-		jne NotEqual
-	loop ForEachCharacter
-		jmp CompareStringDone
-
-	NotEqual:
-		movq $0x1, \ResultCond
-
-	CompareStringDone:
-
-	subq $0x8, \EntryReg
+	CompareLen %r13, \EntryReg, CompareDone
+	CompareChar %r13, \EntryReg, CompareDone
+	CompareDone:
 
 	pop %rcx
 	pop %r13
@@ -87,9 +86,8 @@
 		cmpq $(0x0), (%r9)
 		je LookUpDone
 
-		Compare WordOffset(%rip), %r9, %r8
-		dec %r8
-		je NotMatching
+		Compare WordOffset(%rip), %r9
+		jne NotMatching
 
 		Matching:
 			// Sanity check:

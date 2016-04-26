@@ -32,14 +32,14 @@ Find:
 _main:
 	InitStack
 
-MainLoop:
+// MainLoop:
 
-	ScanInputBuffer	
+	// ScanInputBuffer	
 	Parse
 
 	DepleteStack
 
-	jmp MainLoop
+	// jmp MainLoop
 
 	movq $SyscallExit, %rax
 	syscall
