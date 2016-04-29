@@ -6,9 +6,9 @@ WordLength:
 WordOffset:
 	.quad   0
 InputBufferLength:
-	.quad	9
+	.quad	4
 InputBuffer:
-	.ascii "God Jesus "
+	.ascii "God "
 	.fill 	64, 1, 0x20 
 InputBufferEnd:
 

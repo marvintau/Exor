@@ -9,9 +9,11 @@
 
 .section __TEXT, __text
 .include "IO.s"
-.include "Dictionary.s"
+.include "MatchWord.s"
 .include "Lexer.s"
 .include "Stack.s"
+.include "FindEntry.s"
+.include "EntryStructure.s"
 
 .globl _main
 
@@ -25,10 +27,6 @@ PrintString:
 	Print %r13, -8(%r13)
 	ret
 
-Find:
-	FindEntry
-	ret
-
 _main:
 	InitStack
 
@@ -37,45 +35,12 @@ _main:
 	// ScanInputBuffer	
 	Parse
 
-	ExecuteStack
+	// ExecuteStack
 
 	// jmp MainLoop
 
 	movq $SyscallExit, %rax
 	syscall
-
-.macro String name, content
-	Length\name:
-		.quad(End\name - Start\name)
-	Start\name:
-		.ascii "\content"
-	End\name:
-.endm
-
-.macro Entry name, EntryType
-	\name:
-	String Entry\name, "\name"
-	.byte \EntryType
-.endm
-
-.macro EntryEnd name
-	EntryEndOf\name:
-		.quad (\name - DictEnd)
-.endm
-
-.macro StringDisplay name, string
-	Entry \name, EntryType.Code
-		jmp Skipped\name
-			String \name, "\string"
-		Skipped\name:
-			push %r13
-			leaq Start\name(%rip), %r13
-			call PrintString
-			pop  %r13
-			jmp ExecuteDone
-	EntryEnd \name
-.endm
-
 
 .align 8
 DictEnd:

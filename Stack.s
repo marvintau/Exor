@@ -86,24 +86,16 @@ ExecuteWordSubRoutine:
 	// Sanity check:
 	// the \Reg still holds the address of initial byte
 	// of the length quad.
-	movq (\Reg), %r13
-	cmpb $(0x00), 8(\Reg, %r13)
+	cmpq $(0x00), (\Reg)
 
 	je ExecuteCode
 	jne ExecuteWord
 
 	ExecuteCode:
-		MoveToDef \Reg
-		AfterMoveToDef:
-		// When we are about to jump to the code in the
-		// definition, first we need to move the reg to
-		// the starting byte of code, located at X of:
-		// V(\Reg)
-		// |8:Len|Len:Name|1:type|X.....
+		leaq 8(\Reg), \Reg
 		jmpq *\Reg
 		jmp ExecuteDone
 	ExecuteWord:
-		// TraverseDef \Reg, \Action
 		call ExecuteWordSubRoutine
 	ExecuteDone:
 
