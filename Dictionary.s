@@ -9,26 +9,24 @@
 	addq $0x9,   \EntryReg
 .endm
 
+// If you are curious about why not use a single instruction
+// leaq DictEnd(%rip, \EntryReg), \EntryReg
+// in the following macro, and borrow one more register %r15,
+// the reason is RIP-relative addressing doesn't conform to
+// the addressing form
+// XXX Offset(%rip, indexReg, scaleReg), %reg
+
 .macro MoveToNextEntry EntryReg
-	push %r10
 	movq -8(\EntryReg), \EntryReg
-	leaq DictEnd(%rip), %r10
-	leaq (%r10, \EntryReg), \EntryReg
-	// leaq DictEnd(\EntryReg, %rip), \EntryReg
-	popq %r10
+	leaq DictEnd(%rip), %r15
+	leaq (%r15, \EntryReg), \EntryReg
 .endm
 
 .macro MoveToEntry EntryReg
-	push %r10
-	leaq DictEnd(%rip, \EntryReg), %r10
-	leaq (%r10, \EntryReg), \EntryReg
-	popq %r10
+	leaq DictEnd(%rip, \EntryReg), %r15
+	leaq (%r15, \EntryReg), \EntryReg
 .endm
 
-# How to test the function above:
-# Just run it in a loop that iterate over whole dictionary,
-# with outputing each entry.
-# =========================================================
 
 # Compare two strings. First check if the strings have equal
 # length, then check if any different char exists. The piece
@@ -53,17 +51,15 @@
 
 .macro Compare InputBufferOffset, EntryReg, ResultCond
 
-	push %r13
 	push %rcx
 
-	leaq \InputBufferOffset, %r13
+	leaq \InputBufferOffset, %r14
 
-	CompareLen %r13, \EntryReg, CompareDone
-	CompareChar %r13, \EntryReg, CompareDone
+	CompareLen %r14, \EntryReg, CompareDone
+	CompareChar %r14, \EntryReg, CompareDone
 	CompareDone:
 
 	pop %rcx
-	pop %r13
 
 .endm
 
@@ -71,38 +67,28 @@
 # Look up the dummy words table for the given word
 .macro FindEntry
 
-	push %r8
-	push %r9
-	push %r12
-	push %r13
-
 	// Initialize the dictionary pointer registers.
-	leaq DictStart(%rip), %r9
-	MoveToNextEntry %r9
+	leaq DictStart(%rip), %r13
+	MoveToNextEntry %r13
 
 	
 	ForEachEntry:
 		# Check entry table end
-		cmpq $(0x0), (%r9)
+		cmpq $(0x0), (%r13)
 		je LookUpDone
 
-		Compare WordOffset(%rip), %r9
+		Compare WordOffset(%rip), %r13
 		jne NotMatching
 
 		Matching:
 			// Sanity check:
-			// %r9 stores the intiial address of an entry
+			// %r13 stores the intiial address of an entry
 			// which points to the first byte of length quad
-			PushStack %r9
+			PushStack %r13
 		NotMatching:
-			MoveToNextEntry %r9
+			MoveToNextEntry %r13
 
 	jmp ForEachEntry
 	LookUpDone:
 	
-	pop %r13
-	pop %r12
-	pop %r9
-	pop %r8
-
 .endm

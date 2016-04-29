@@ -37,7 +37,7 @@ _main:
 	// ScanInputBuffer	
 	Parse
 
-	DepleteStack
+	ExecuteStack
 
 	// jmp MainLoop
 
@@ -67,7 +67,6 @@ _main:
 	Entry \name, EntryType.Code
 		jmp Skipped\name
 			String \name, "\string"
-		.align 8
 		Skipped\name:
 			push %r13
 			leaq Start\name(%rip), %r13
@@ -77,6 +76,8 @@ _main:
 	EntryEnd \name
 .endm
 
+
+.align 8
 DictEnd:
 	.quad 0x000000000000
 	StringDisplay God, "HE IS WHO HE IS\n"

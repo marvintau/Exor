@@ -14,66 +14,49 @@
 // pop-related macro functions.
 
 .macro InitStack
-	push %r15
 	leaq Stack(%rip), %r15
 	movq %r15, StackPointer(%rip) 
-	pop  %r15
 .endm
 
 .macro PushStack DataReg
-	push %r15
 	movq StackPointer(%rip), %r15
 	movq \DataReg, (%r15)
 	leaq  8(%r15), %r15
 	movq %r15, StackPointer(%rip)
-	pop  %r15
 .endm
 
-.macro PopStack Action
+.macro PopStack
 	push %r15
 	push %r14
+
 	movq StackPointer(%rip), %r15
 	leaq -8(%r15), %r15
 	movq (%r15), %r14
-	// Execute %r14, \Action
 	call Execute
+
 	movq %r15, StackPointer(%rip)
 	pop  %r14
 	pop  %r15
 .endm
 
-.macro DepleteStack Action
-	push %r15
-	push %r14
+.macro ExecuteStack
 	leaq Stack(%rip), %r15
 
 	//Check emptiness
 	movq StackPointer(%rip), %r14
 	cmpq %r15, %r14
-	je DepleteStack_ForEachElem_Done
+	je ExecuteStack_ForEachElem_Done
 
-	DepleteStack_ForEachElem:
+	ExecuteStack_ForEachElem:
 		PopStack \Action
 		movq StackPointer(%rip), %r14
 		cmpq %r15, %r14
-		jne DepleteStack_ForEachElem
+		jne ExecuteStack_ForEachElem
 
-	DepleteStack_ForEachElem_Done:
-
-	pop  %r14
-	pop  %r15
+	ExecuteStack_ForEachElem_Done:
 .endm
 
-// The word defined by other words introduces a recursive
-// manner of parsing the words. The %r13 will be modified,
-// but since %r13 is guaranteed to be defined before used,
-// (so as %rcx), considering move them out of the macro
-// or functions to save the stack.
-
-// Thus, Reg (%r14) will be pushed onto stack and pop back
-// after the recursive parse is done.
-
-.macro TraverseDefinition Reg, Action
+.macro ExecuteWordSubRoutine Reg, Action
 
 	movq (\Reg), %r13
 	leaq 9(\Reg, %r13), \Reg
@@ -93,8 +76,8 @@
 
 .endm
 
-TraverseDefinition:
-	TraverseDefinition %r14, PrintDef
+ExecuteWordSubRoutine:
+	ExecuteWordSubRoutine %r14, PrintDef
 	ret
 
 
@@ -121,7 +104,7 @@ TraverseDefinition:
 		jmp ExecuteDone
 	ExecuteWord:
 		// TraverseDef \Reg, \Action
-		call TraverseDefinition
+		call ExecuteWordSubRoutine
 	ExecuteDone:
 
 .endm

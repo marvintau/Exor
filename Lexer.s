@@ -17,7 +17,10 @@
 
 .endm
 
-
+// Notably, since we have pushed string address register
+// and length register here, it's safe to use them for
+// different purpose in called Action subroutine. By
+// convention, the two registers are %r14 and %r13
 .macro Prepare StrAddrReg, LengthReg, For, Action
 	push \StrAddrReg
 	push \LengthReg
@@ -62,11 +65,7 @@
 
 .macro Parse
 
-	push %rcx
-	push %r14
-	push %r15
-
-	leaq InputBuffer(%rip), %r14
+	leaq InputBuffer(%rip), %r13
 	movq InputBufferLength(%rip), %rcx
 
 	// Handles zero lengthed user input
@@ -75,12 +74,9 @@
 	
 	Apply_ForEachWord:
 		push %rcx
-		CheckCharEdgeWith %r14, %r15, Find
+		CheckCharEdgeWith %r13, %r14, Find
 		popq %rcx
 		loop Apply_ForEachWord
 	Apply_ForEachWord_Done:
 
-	popq %r15
-	popq %r14
-	popq %rcx
 .endm
