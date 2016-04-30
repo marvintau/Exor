@@ -64,6 +64,8 @@
 .endm
 
 .macro Parse
+	push %r13
+	push %r14
 
 	leaq InputBuffer(%rip), %r13
 	movq InputBufferLength(%rip), %rcx
@@ -79,4 +81,6 @@
 		loop Apply_ForEachWord
 	Apply_ForEachWord_Done:
 
+	pop %r14
+	pop %r13
 .endm

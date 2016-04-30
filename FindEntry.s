@@ -42,7 +42,6 @@
 .endm
 
 
-
 .macro FindEntry EntryReg
 
 	// Initialize the dictionary pointer registers.
@@ -62,9 +61,10 @@
 			jne NotMatching
 
 		Matching:
-			// Sanity check:
-			// \EntryReg stores the intiial address of an entry
-			// which points to the first byte of length quad
+			// SANITY CHECK:
+			// Now \EntryReg stores the EntryBegin\name,
+			// or the address of the beginning of the
+			// code. 
 			PushStack \EntryReg
 			jmp LookUpDone
 		NotMatching:

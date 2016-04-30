@@ -40,6 +40,9 @@
 .endm
 
 .macro ExecuteStack
+	push %r15
+	push %r14
+
 	leaq Stack(%rip), %r15
 
 	//Check emptiness
@@ -54,13 +57,13 @@
 		jne ExecuteStack_ForEachElem
 
 	ExecuteStack_ForEachElem_Done:
+
+	pop %r14
+	pop %r15
 .endm
 
 .macro ExecuteWordSubRoutine Reg, Action
 
-	movq (\Reg), %r13
-	leaq 9(\Reg, %r13), \Reg
-	// now %r13 can be safely modified.
 
 	movq (\Reg), %rcx
 	ForEachWordInEntry:
@@ -83,16 +86,18 @@ ExecuteWordSubRoutine:
 
 .macro Execute Reg
 	
-	// Sanity check:
-	// the \Reg still holds the address of initial byte
-	// of the length quad.
-	cmpq $(0x00), (\Reg)
+	// SANITY CHECK:
+	// Now the reg is pointing to the EntryBegin\name
+	// First to check if it's a compound word or code.
+	// No matter it's a word or code, we make the reg
+	// point to actual content.
+	cmpq $(0x00), 8(\Reg)
+	leaq 16(\Reg), \Reg
 
 	je ExecuteCode
 	jne ExecuteWord
 
 	ExecuteCode:
-		leaq 8(\Reg), \Reg
 		jmpq *\Reg
 		jmp ExecuteDone
 	ExecuteWord:

@@ -30,14 +30,13 @@ PrintString:
 _main:
 	InitStack
 
-// MainLoop:
+MainLoop:
 
-	// ScanInputBuffer	
+	ScanInputBuffer	
 	Parse
+	ExecuteStack
 
-	// ExecuteStack
-
-	// jmp MainLoop
+	jmp MainLoop
 
 	movq $SyscallExit, %rax
 	syscall
@@ -55,15 +54,15 @@ DictEnd:
 
 	Entry All, EntryType.WordSeq
 		.quad 2
-		.quad God
-		.quad Adam
+		.quad EntryBeginGod
+		.quad EntryBeginAdam
 	EntryEnd All
 
 	Entry All2, EntryType.WordSeq
 		.quad 3
-		.quad Eve
-		.quad Jesus
-		.quad All
+		.quad EntryBeginEve
+		.quad EntryBeginJesus
+		.quad EntryBeginAll
 	EntryEnd All2
 
 DictStart:
