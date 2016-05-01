@@ -8,7 +8,6 @@ WordOffset:
 InputBufferLength:
 	.quad	10
 InputBuffer:
-	.ascii "God Jesus "
 	.fill 	64, 1, 0x20 
 InputBufferEnd:
 

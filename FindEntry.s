@@ -47,7 +47,6 @@
 	// Initialize the dictionary pointer registers.
 	leaq DictStart(%rip), \EntryReg
 	GoToFirstEntry \EntryReg
-
 	
 	ForEachEntry:
 		// Check if dictionary end reached

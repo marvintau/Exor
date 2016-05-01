@@ -19,6 +19,16 @@
 	loop ForEachCharacter
 .endm
 
+.macro CheckNumber BuffReg, DoneLabel
+	movq (\BuffReg), \BuffReg
+	ForEachDigit:
+		cmpb $(0x30), -1(\BuffReg, %rcx)
+		jl \DoneLabel
+		cmpb $(0x39), -1(\BuffReg, %rcx)
+		jg \DoneLabel
+	loop ForEachDigit
+.endm
+
 .macro Compare EntryReg
 
 	push %r14

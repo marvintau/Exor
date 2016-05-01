@@ -43,8 +43,6 @@
 		.quad \EntryType
 .endm
 
-
-
 .macro EntryEnd name
 	EntryEndOf\name:
 		.quad (\name - DictEnd)

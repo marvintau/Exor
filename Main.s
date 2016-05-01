@@ -3,11 +3,11 @@
  *  =======================
  *  Containing learning notes and resources
  */
-.section __DATA, __data
+.data
 .include "DataSegment.s"
 
 
-.section __TEXT, __text
+.text
 .include "IO.s"
 .include "MatchWord.s"
 .include "Lexer.s"
