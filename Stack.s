@@ -1,5 +1,5 @@
-// A principle: if a register is guaranteed to be defined
-// (modified) before used, then no need to push and pop it.
+# A principle: if a register is guaranteed to be defined
+# (modified) before used, then no need to push and pop it.
 
 .macro PrintEntry Reg
 	addq $0x8, \Reg
@@ -8,10 +8,10 @@
 .endm
 
 
-// For stack operations, only two registers are used in each
-// macro functions. %r15 stores the stack address, while %r14
-// are for storing the popped data, which is only appear in
-// pop-related macro functions.
+# For stack operations, only two registers are used in each
+# macro functions. %r15 stores the stack address, while %r14
+# are for storing the popped data, which is only appear in
+# pop-related macro functions.
 
 .macro InitStack
 	leaq Stack(%rip), %r15
@@ -45,7 +45,7 @@
 
 	leaq Stack(%rip), %r15
 
-	//Check emptiness
+	#Check emptiness
 	movq StackPointer(%rip), %r14
 	cmpq %r15, %r14
 	je ExecuteStack_ForEachElem_Done
@@ -86,11 +86,11 @@ ExecuteWordSubRoutine:
 
 .macro Execute Reg
 	
-	// SANITY CHECK:
-	// Now the reg is pointing to the EntryBegin\name
-	// First to check if it's a compound word or code.
-	// No matter it's a word or code, we make the reg
-	// point to actual content.
+	# SANITY CHECK:
+	# Now the reg is pointing to the EntryBegin\name
+	# First to check if it's a compound word or code.
+	# No matter it's a word or code, we make the reg
+	# point to actual content.
 	cmpq $(0x00), 8(\Reg)
 	leaq 16(\Reg), \Reg
 

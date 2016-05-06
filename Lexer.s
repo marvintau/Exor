@@ -17,10 +17,10 @@
 
 .endm
 
-// Notably, since we have pushed string address register
-// and length register here, it's safe to use them for
-// different purpose in called Action subroutine. By
-// convention, the two registers are %r14 and %r13
+# Notably, since we have pushed string address register
+# and length register here, it's safe to use them for
+# different purpose in called Action subroutine. By
+# convention, the two registers are %r14 and %r13
 .macro Prepare StrAddrReg, LengthReg, For, Action
 	push \StrAddrReg
 	push \LengthReg
@@ -70,7 +70,7 @@
 	leaq InputBuffer(%rip), %r13
 	movq InputBufferLength(%rip), %rcx
 
-	// Handles zero lengthed user input
+	# Handles zero lengthed user input
 	test %rcx, %rcx
 	je   Apply_ForEachWord_Done
 	
