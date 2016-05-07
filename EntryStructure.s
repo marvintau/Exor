@@ -6,57 +6,71 @@
 	End\name:
 .endm
 
-.macro Entry name, EntryType
+.include "EntryStructureMatching.s"
 
-	# This name is particularly for defining words
-	# before compile-time, i.e. for built-in words.
-	\name:
+.macro Entry name, EntryReg
 
-	jmp EntryCheck\name
-		String Entry\name, "\name"
+    \name:
 
-	EntryCheck\name:
-		# This will be executed before pushing the reg
-		# into stack. Since the Find & Match will push
-		# %r13 onto the stack, we always use %r13 here.
-		leaq Entry\name(%rip), %r13
-		call MatchWord
+    jmp EntryCheck\name
+	String Entry\name, "\name"
 
-		# %r13 is free to modified. Here we are going
-		# to use %r13 as the entry pointer and pass it
-		# back to the matching subroutine.
-		leaq EntryBegin\name(%rip), %r13
-		jmp  MatchDone
+    EntryExactMatch \name, \EntryReg
 
-	EntryBegin\name:
-		# Notably, EntryCheck may have a different way
-		# to check the name pattern. We only care about
-		# the ZF register when jumped to MatchDone. If
-		# the pattern is not matching, we need to jump
-		# back to the beginning of the entry with the
-		# following distance indicated by the first 8
-		# bytes. Otherwise, the IP will jump 16 bytes
-		# further from this address in order to execute
-		# the actual code.
-
-		.quad (EntryBegin\name - \name)
-		.quad \EntryType
+    EntryBegin\name:
+	.quad (EntryBegin\name - \name)
 .endm
 
 .macro EntryEnd name
-	EntryEndOf\name:
-		.quad (\name - DictEnd)
+    EntryEndOf\name:
+	.quad (\name - DictEnd)
+.endm
+
+.macro Integer EntryReg
+    IntegerHandler:
+        EntryIntegerMatch \EntryReg
+    IntegerHandlerBegin:
+        .quad (IntegerHandlerBegin - IntegerHandler)
 .endm
 
 .macro StringDisplay name, string
-	Entry \name, EntryType.Code
-		jmp SkippedContent\name
-			String Content\name, "\string"
-		SkippedContent\name:
-			push %r13
-			leaq Content\name(%rip), %r13
-			call PrintString
-			pop  %r13
-			jmp ExecuteDone
+    Entry \name, %r13
+	jmp SkippedContent\name
+	    String Content\name, "\string"
+	SkippedContent\name:
+            push %r13
+            leaq Content\name(%rip), %r13
+            call PrintString
+            pop  %r13
+            jmp ExecuteDone
 	EntryEnd \name
+.endm
+
+.macro IntegerDisplay
+    Integer %r13
+        jmp SkippedInteger
+            String Yep, "Integer found"
+        SkippedInteger:
+            push %r13
+            leaq Yep(%rip), %r13
+            call PrintString
+            pop  %r13
+            jmp ExecuteDone
+        EntryEnd IntegerHandler
+.endm
+
+.macro EntryWordSequence name
+    Entry \name, %r13
+        jmp EndWordSequence\name
+    StartOfWordSequence\name:
+.endm
+
+.macro EntryWordSequenceEnd name
+    EndWordSequence\name:
+        push %r14
+        leaq StartOfWordSequence\name(%rip), %r14
+        call ExecuteWordSubRoutine 
+        pop  %r14
+        jmp  ExecuteDone
+    EntryEnd \name
 .endm

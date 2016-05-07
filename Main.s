@@ -34,7 +34,7 @@ MainLoop:
 
 	ScanInputBuffer	
 	Parse
-	ExecuteStack
+	ExecuteWholeStack
 
 	jmp MainLoop
 
@@ -44,6 +44,8 @@ MainLoop:
 .align 8
 DictEnd:
 	.quad 0x000000000000
+        IntegerDisplay
+
 	StringDisplay God, "HE IS WHO HE IS\n"
 
 	StringDisplay Jesus, "BELOVED SON\n"
@@ -52,17 +54,17 @@ DictEnd:
 
 	StringDisplay Eve, "FIRST CREATED WOMAN\n"
 
-	Entry All, EntryType.WordSeq
+        EntryWordSequence All
 		.quad 2
 		.quad EntryBeginGod
 		.quad EntryBeginAdam
-	EntryEnd All
+        EntryWordSequenceEnd All
 
-	Entry All2, EntryType.WordSeq
+        EntryWordSequence All2
 		.quad 3
 		.quad EntryBeginEve
 		.quad EntryBeginJesus
 		.quad EntryBeginAll
-	EntryEnd All2
+        EntryWordSequenceEnd All2
 
 DictStart:
