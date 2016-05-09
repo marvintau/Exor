@@ -15,21 +15,15 @@
 
 .macro InitStack
     leaq Stack(%rip), %r15
-    movq %r15, StackPointer(%rip) 
 .endm
 
 .macro PushStack DataReg
-    movq StackPointer(%rip), %r15
     movq \DataReg, (%r15)
     leaq  8(%r15), %r15
-    movq %r15, StackPointer(%rip)
 .endm
 
 .macro PopStack
-    push %r15
-    push %r14
-
-    movq StackPointer(%rip), %r15
+    
     leaq Stack(%rip), %r14
     cmpq %r14, %r15
     je   StackBaseReached    
@@ -39,9 +33,7 @@
     call Execute
 
     StackBaseReached:
-    movq %r15, StackPointer(%rip)
-    pop  %r14
-    pop  %r15
+
 .endm
 
 .macro ExecuteWholeStack

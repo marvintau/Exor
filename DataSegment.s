@@ -1,10 +1,6 @@
 Number:
 	.ascii "%08X\n"
 
-WordLength:
-	.quad   0
-WordOffset:
-	.quad   0
 InputBufferLength:
 	.quad   3	
 InputBuffer:

@@ -8,6 +8,7 @@
 
 .macro MatchLen LenReg, EntryReg, DoneLabel
     movq \LenReg, %rcx
+    incq %rcx
     cmpq -8(\EntryReg), %rcx
     jne \DoneLabel
 
@@ -33,7 +34,7 @@
         
     xorq \ResReg, \ResReg
     incq \ResReg
-    BeforeMoving:
+    
     ForEachDigit:
 	cmpb $(0x30), -1(\BuffReg, %rcx)
 	jl \DoneLabel

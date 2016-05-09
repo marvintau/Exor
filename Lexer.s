@@ -1,3 +1,4 @@
+
 # Used by ScanInputBuffer
 .macro ScanInputBuffer
     movq    $SyscallRead, %rax
@@ -24,13 +25,9 @@
 .macro Prepare StrAddrReg, LengthReg, For, Action
 
     subq \LengthReg, \StrAddrReg
-    incq \LengthReg
 
-    movq \StrAddrReg, WordOffset(%rip)
-    movq \LengthReg, WordLength(%rip)
     call \Action
 
-    decq \LengthReg
     addq \LengthReg, \StrAddrReg
         
 .endm
@@ -70,11 +67,11 @@
 .macro LocateWord
 .endm
 
-.macro Parse
-    push %r9
-    push %r8
+.macro LexWholeSequence 
+
 
     leaq InputBuffer(%rip), %r9
+    xorq %r8, %r8
     movq InputBufferLength(%rip), %rcx
 
     # Handles zero lengthed user input
@@ -82,12 +79,9 @@
     je   Apply_ForEachWord_Done
     
     Apply_ForEachWord:
-        push %rcx
         CheckCharEdgeWith %r9, %r8, Find
-        popq %rcx
         loop Apply_ForEachWord
     Apply_ForEachWord_Done:
 
-    pop %r8
-    pop %r9
+
 .endm

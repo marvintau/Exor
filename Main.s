@@ -32,14 +32,14 @@ _main:
 
 MainLoop:
 
-	ScanInputBuffer	
-	Parse
-	ExecuteWholeStack
+    ScanInputBuffer	
+    LexWholeSequence	
+    ExecuteWholeStack
 
-	jmp MainLoop
+    jmp MainLoop
 
-	movq $SyscallExit, %rax
-	syscall
+    movq $SyscallExit, %rax
+    syscall
 
 .align 8
 DictEnd:
