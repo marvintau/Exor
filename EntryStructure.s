@@ -49,7 +49,7 @@
 .macro IntegerDisplay
     Integer %r13
         jmp SkippedInteger
-            String Yep, "Integer found"
+            String Yep, "Integer found\n"
         SkippedInteger:
             push %r13
             leaq Yep(%rip), %r13
@@ -69,7 +69,7 @@
     EndWordSequence\name:
         push %r14
         leaq StartOfWordSequence\name(%rip), %r14
-        call ExecuteWordSubRoutine 
+        call ExecuteWord 
         pop  %r14
         jmp  ExecuteDone
     EntryEnd \name

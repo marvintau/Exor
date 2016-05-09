@@ -1,17 +1,19 @@
-# Compare two strings. First check if the strings have equal
-# length, then check if any different char exists. The piece
-# of code doesn't affected the referred address registers
-# except the counter.
 
-.macro MatchLen BuffReg, EntryReg, DoneLabel
-    movq -8(\BuffReg), %rcx
+# All entry matching functions are here. Note that 
+# the comparison needs the two registers containing
+# the buffer offset and length.
+
+# consider to make a set of macro set definitions to
+# replace the register with more comprehensible name.
+
+.macro MatchLen LenReg, EntryReg, DoneLabel
+    movq \LenReg, %rcx
     cmpq -8(\EntryReg), %rcx
     jne \DoneLabel
 
 .endm
 
 .macro MatchChar BuffReg, EntryReg, DoneLabel
-    movq (\BuffReg), \BuffReg
     ForEachCharacter:		
         movb -1(\BuffReg, %rcx), %al
         cmpb -1(\EntryReg, %rcx), %al
@@ -21,17 +23,9 @@
 
 .macro MatchExactName EntryReg
 
-    push %r14
-    push %rcx
-
-    leaq WordOffset(%rip), %r14
-
-    MatchLen %r14, \EntryReg, MatchExactNameDone
-    MatchChar %r14, \EntryReg, MatchExactNameDone
+    MatchLen %r8, \EntryReg, MatchExactNameDone
+    MatchChar %r9, \EntryReg, MatchExactNameDone
     MatchExactNameDone:
-
-    pop %rcx
-    pop %r14
 
 .endm
 
@@ -40,15 +34,13 @@
     xorq \ResReg, \ResReg
     incq \ResReg
     BeforeMoving:
-    movq (\BuffReg), \BuffReg
     ForEachDigit:
 	cmpb $(0x30), -1(\BuffReg, %rcx)
 	jl \DoneLabel
 	cmpb $(0x39), -1(\BuffReg, %rcx)
 	jg \DoneLabel
     loop ForEachDigit
-
-    decq \ResReg
+        decq \ResReg
 
 .endm
 
@@ -58,17 +50,9 @@ MatchExactName:
 
 MatchInteger:
 
-    push %r14
-    push %r13
-    push %rcx
-
-    leaq WordOffset(%rip), %r14
-    MatchInteger %r14, %r13, MatchIntegerDone
+    MatchInteger %r9, %r13, MatchIntegerDone
     MatchIntegerDone:
 
-    pop  %rcx
-    pop  %r13
-    pop  %r14
     ret
 
 

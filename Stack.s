@@ -45,48 +45,41 @@
 .endm
 
 .macro ExecuteWholeStack
-    ExecuteStackNextElem:
+    ExecuteNextElem:
 	PopStack 
-        jne ExecuteStackNextElem
+        jne ExecuteNextElem
 .endm
 
-.macro ExecuteWordSubRoutine Reg
+.macro ExecuteWord Reg
 
+    movq (\Reg), %rcx
+    ForEachWordInEntry:
+        push \Reg
+        push %rcx
 
-	movq (\Reg), %rcx
-	ForEachWordInEntry:
-		push \Reg
-		push %rcx
+        movq (\Reg, %rcx, 8), \Reg
+        call Execute
 
-		movq (\Reg, %rcx, 8), \Reg
-		call Execute
-
-		pop  %rcx
-		pop \Reg
-	loop ForEachWordInEntry
+        pop  %rcx
+        pop \Reg
+    loop ForEachWordInEntry
 
 .endm
 
-ExecuteWordSubRoutine:
-	ExecuteWordSubRoutine %r14
-	ret
+ExecuteWord:
+    ExecuteWord %r14
+    ret
 
 
 .macro Execute Reg
-	
-	# SANITY CHECK:
-	# Now the reg is pointing to the EntryBegin\name
-	# First to check if it's a compound word or code.
-	# No matter it's a word or code, we make the reg
-	# point to actual content.
-        leaq 8(\Reg), \Reg
-	ExecuteCode:
-		jmpq *\Reg
-		jmp ExecuteDone
-	ExecuteDone:
 
+    leaq 8(\Reg), \Reg
+    ExecuteCode:
+        jmpq *\Reg
+        jmp ExecuteDone
+    ExecuteDone:
 .endm
 
 Execute:
-	Execute %r14
-	ret
+    Execute %r14
+    ret
