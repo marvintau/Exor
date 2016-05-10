@@ -10,27 +10,27 @@
 
 .macro Entry name, EntryReg
 
-    \name:
+    Header\name:
 
     jmp EntryCheck\name
 	String Entry\name, "\name"
 
     EntryExactMatch \name, \EntryReg
 
-    EntryBegin\name:
-	.quad (EntryBegin\name - \name)
+    \name:
+	.quad (\name - Header\name)
 .endm
 
 .macro EntryEnd name
     EntryEndOf\name:
-	.quad (\name - DictEnd)
+	.quad (Header\name - DictEnd)
 .endm
 
 .macro Integer EntryReg
-    IntegerHandlerHeader:
+    HeaderInteger:
         EntryIntegerMatch \EntryReg
-    IntegerHandlerBegin:
-        .quad (IntegerHandlerBegin - IntegerHandlerHeader)
+    Integer:
+        .quad (Integer - HeaderInteger)
 .endm
 
 .macro StringDisplay name, string
@@ -56,7 +56,7 @@
             call PrintString
             pop  %r13
             jmp ExecuteDone
-        EntryEnd IntegerHandlerHeader
+        EntryEnd Integer
 .endm
 
 .macro EntryWordSequence name

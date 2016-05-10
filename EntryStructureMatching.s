@@ -11,7 +11,7 @@
         leaq Entry\name(%rip), \EntryReg
         call \Type
 
-	leaq EntryBegin\name(%rip), \EntryReg
+	leaq \name(%rip), \EntryReg
 	jmp  MatchDone
 
 .endm
@@ -25,7 +25,7 @@
 
         call MatchInteger
 
-        leaq IntegerHandlerBegin(%rip), \EntryReg
+        leaq Integer(%rip), \EntryReg
         jmp  MatchDone
 
 .endm

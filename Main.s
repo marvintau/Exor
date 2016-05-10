@@ -56,15 +56,15 @@ DictEnd:
 
         EntryWordSequence All
 		.quad 2
-		.quad EntryBeginGod
-		.quad EntryBeginAdam
+		.quad God
+		.quad Adam
         EntryWordSequenceEnd All
 
         EntryWordSequence All2
 		.quad 3
-		.quad EntryBeginEve
-		.quad EntryBeginJesus
-		.quad EntryBeginAll
+		.quad Eve
+		.quad Jesus
+		.quad All
         EntryWordSequenceEnd All2
 
 DictStart:
