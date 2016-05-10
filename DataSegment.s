@@ -4,7 +4,7 @@ Number:
 InputBufferLength:
 	.quad   3	
 InputBuffer:
-        .ascii "All"
+        .ascii "All Adam"
 	.fill 	64, 1, 0x20 
 InputBufferEnd:
 

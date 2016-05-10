@@ -14,6 +14,7 @@
 .include "Stack.s"
 .include "FindEntry.s"
 .include "EntryStructure.s"
+.include "Execute.s"
 
 .globl _main
 

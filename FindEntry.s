@@ -1,4 +1,5 @@
 
+
 .macro GoToNextEntry EntryReg
 
     subq (\EntryReg), \EntryReg
@@ -36,7 +37,8 @@
             jne NotMatching
 
         Matching:
-            PushStack \EntryReg
+            leaq 8(\EntryReg), %r10
+            PushStack %r10
             jmp LookUpDone
         
         NotMatching:
