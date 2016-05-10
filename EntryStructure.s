@@ -27,10 +27,10 @@
 .endm
 
 .macro Integer EntryReg
-    IntegerHandler:
+    IntegerHandlerHeader:
         EntryIntegerMatch \EntryReg
     IntegerHandlerBegin:
-        .quad (IntegerHandlerBegin - IntegerHandler)
+        .quad (IntegerHandlerBegin - IntegerHandlerHeader)
 .endm
 
 .macro StringDisplay name, string
@@ -56,7 +56,7 @@
             call PrintString
             pop  %r13
             jmp ExecuteDone
-        EntryEnd IntegerHandler
+        EntryEnd IntegerHandlerHeader
 .endm
 
 .macro EntryWordSequence name

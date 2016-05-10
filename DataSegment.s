@@ -8,8 +8,6 @@ InputBuffer:
 	.fill 	64, 1, 0x20 
 InputBufferEnd:
 
-.set EntryType.Code,  0x00
-.set EntryType.WordSeq, 0x01
 
 StackPointer:
 	.quad	0
