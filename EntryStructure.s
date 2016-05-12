@@ -17,8 +17,8 @@
 
     EntryExactMatch \name, \EntryReg
 
-    \name:
 	.quad (\name - Header\name)
+    \name:
 .endm
 
 .macro EntryEnd name
@@ -29,8 +29,8 @@
 .macro Integer EntryReg
     HeaderInteger:
         EntryIntegerMatch \EntryReg
-    Integer:
         .quad (Integer - HeaderInteger)
+    Integer:
 .endm
 
 .macro StringDisplay name, string

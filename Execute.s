@@ -13,7 +13,6 @@
         push %rcx
 
         movq (\Reg, %rcx, 8), \Reg
-        leaq 8(\Reg), \Reg
         call Execute
 
         pop  %rcx

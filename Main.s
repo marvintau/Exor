@@ -29,9 +29,11 @@ PrintString:
 	ret
 
 _main:
-	InitStack
+    InitStack
 
 MainLoop:
+
+    ReInitLexer
 
     ScanInputBuffer	
     LexWholeSequence	

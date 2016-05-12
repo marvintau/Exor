@@ -1,5 +1,5 @@
+# Lexer uses r8 and r9 register
 
-# Used by ScanInputBuffer
 .macro ScanInputBuffer
     movq    $SyscallRead, %rax
     movl    $(1), %edi
@@ -32,7 +32,7 @@
         
 .endm
 
-.macro CheckCharEdgeWith StrAddrReg, LengthReg, Action
+.macro LocateWord StrAddrReg, LengthReg, Action
         cmpb $(0x20), (\StrAddrReg)
         je   StartWithSpace
         jne  StartWithChar
@@ -59,17 +59,7 @@
         incq \StrAddrReg
 .endm
 
-.macro InitParse
-    # Assign the input buffer and length to proper registers.
-    # AND NEVER CHANGE LATER! NO MORE PUSH AND POP!
-.endm
-
-.macro LocateWord
-.endm
-
-.macro LexWholeSequence 
-
-
+.macro ReInitLexer
     leaq InputBuffer(%rip), %r9
     xorq %r8, %r8
     movq InputBufferLength(%rip), %rcx
@@ -77,11 +67,13 @@
     # Handles zero lengthed user input
     test %rcx, %rcx
     je   Apply_ForEachWord_Done
-    
+ .endm
+
+.macro LexWholeSequence 
+   
     Apply_ForEachWord:
-        CheckCharEdgeWith %r9, %r8, Find
+        LocateWord %r9, %r8, Find
         loop Apply_ForEachWord
     Apply_ForEachWord_Done:
-
 
 .endm
