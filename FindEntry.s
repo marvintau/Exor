@@ -1,18 +1,50 @@
 
+# ENTRY NAME MATCHING
+# ===================
+# exclusively used by FindEntry.
+
+.macro MatchLen LenReg, EntryReg, DoneLabel
+
+    movq \LenReg, %rcx
+    incq %rcx
+    cmpq (\EntryReg), %rcx
+    jne \DoneLabel
+
+.endm
+
+.macro MatchChar BuffReg, EntryReg, DoneLabel
+    ForEachCharacter:		
+        movb  -1(\BuffReg, %rcx), %al
+        cmpb  7(\EntryReg, %rcx), %al
+        jne \DoneLabel
+    loop ForEachCharacter
+.endm
+
+.macro MatchExactName EntryReg
+
+    
+    MatchLen %r8, \EntryReg, MatchExactNameDone
+    MatchChar %r9, \EntryReg, MatchExactNameDone
+    MatchExactNameDone:
+
+   # decq %r8
+
+.endm
+
+# ENTRY TRAVERSING ROUTINES
+# =========================
+# also execlusively used by FindEntry
+
+.macro GoToFirstEntry EntryReg
+    leaq DictStart(%rip), \EntryReg
+    GoToNextEntry \EntryReg
+.endm
 
 .macro GoToNextEntry EntryReg
 
-    subq -8(\EntryReg), \EntryReg
     movq -8(\EntryReg), \EntryReg
     GoToEntry \EntryReg
     
-.endm
-
-.macro GoToFirstEntry EntryReg
-
-    movq -8(\EntryReg), \EntryReg
-    GoToEntry \EntryReg
-
 .endm
 
 .macro GoToEntry EntryReg
@@ -20,24 +52,30 @@
     leaq (%r10, \EntryReg), \EntryReg
 .endm
 
+.macro GoToDefinition EntryReg
+    addq (\EntryReg), \EntryReg
+    leaq 8(\EntryReg), \EntryReg
+.endm
 
 .macro FindEntry EntryReg
 
-    leaq DictStart(%rip), \EntryReg
-    GoToFirstEntry \EntryReg
-    
+    GoToFirstEntry \EntryReg   
+ 
     ForEachEntry:
         
         cmpq $(0x0), (\EntryReg)
         je LookUpDone
 
-        jmp *\EntryReg
-        
-        MatchDone:
+        MatchExactName \EntryReg       
+ 
             jne NotMatching
 
-        Matching:
+        OtherwiseMatching:
+           
+            push \EntryReg 
+            GoToDefinition \EntryReg
             PushStack \EntryReg 
+            pop  \EntryReg
             jmp LookUpDone
         
         NotMatching:

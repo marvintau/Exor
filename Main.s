@@ -9,7 +9,6 @@
 
 .text
 .include "IO.s"
-.include "MatchWord.s"
 .include "Lexer.s"
 .include "Stack.s"
 .include "FindEntry.s"
@@ -31,15 +30,14 @@ PrintString:
 _main:
     InitStack
 
-MainLoop:
+#MainLoop:
 
-    ReInitLexer
 
-    ScanInputBuffer	
-    LexWholeSequence	
+#    ScanInputBuffer	
+    LocateAllWord %r8, %r9, PrintWordTest
     ExecuteWholeStack
 
-    jmp MainLoop
+#    jmp MainLoop
 
     movq $SyscallExit, %rax
     syscall
@@ -47,7 +45,6 @@ MainLoop:
 .align 8
 DictEnd:
 	.quad 0x000000000000
-        IntegerDisplay
 
 	StringDisplay God, "HE IS WHO HE IS\n"
 

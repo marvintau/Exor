@@ -18,62 +18,86 @@
 
 .endm
 
-# Notably, since we have pushed string address register
-# and length register here, it's safe to use them for
-# different purpose in called Action subroutine. By
-# convention, the two registers are %r8 and %r9
-.macro Prepare StrAddrReg, LengthReg, For, Action
+.macro InitLocateWord StartReg, EndReg 
 
-    subq \LengthReg, \StrAddrReg
+    # setting up the StartReg, and make it point to the
+    # last input character in the buffer.
+    
+    leaq InputBuffer(%rip), \StartReg
+    addq InputBufferLength(%rip), \StartReg
+    decq \StartReg
 
-    call \Action
+.endm
 
-    addq \LengthReg, \StrAddrReg
+# Always terminates when a bigram of char followed with
+# a space is found, with StartReg pointing to initial,
+# and EndReg to first space after last char. 
+
+.macro LocateNextWord StartReg, EndReg 
+
+    NextBigram:
+
+        cmpb $(0x20), (\StartReg)
+        je   StartWithSpace
+        jne  StartWithChar
+
+        StartWithSpace:
+            xorq \EndReg, \EndReg
+            cmpb $(0x20), -1(\StartReg)
+            je  MoveCurr 
+
+            CharNext:
+                movq \StartReg, \EndReg
+                jmp MoveCurr 
+
+        StartWithChar:
+            cmpb $(0x20), -1(\StartReg) 
+            jne MoveCurr 
+
+            SpaceNext:
+
+                jmp WordLocated
+
+        MoveCurr:
+
+            # There is a white space before the address
+            # of InputBuffer, which guarantees that the
+            # first word in buffer can be found without
+            # special handling.
+
+            decq \StartReg
+        
+        jmp NextBigram 
+
+    WordLocated:
+
+.endm
+
+.macro CheckLocateCondition StartReg, EndReg, LoopLabel, DoneLabel
+
+    leaq InputBuffer(%rip), \EndReg
+    cmpq \StartReg, \EndReg
+    je   \DoneLabel
+    
+    decq \StartReg
+    jmp  \LoopLabel
+
+.endm
+
+.macro LocateAllWord StartReg, EndReg, Action
+
+    InitLocateWord \StartReg, \EndReg
+
+    NextWord:
+        LocateNextWord \StartReg, \EndReg
+        \Action \StartReg, \EndReg
+        CheckLocateCondition \StartReg, \EndReg, NextWord, AllDone 
+    AllDone:        
         
 .endm
 
-.macro LocateWord StrAddrReg, LengthReg, Action
-        cmpb $(0x20), (\StrAddrReg)
-        je   StartWithSpace
-        jne  StartWithChar
-    
-    StartWithSpace:
-        cmpb $(0x20), 1(\StrAddrReg)
-        je   Done
-
-        ButNextIsChar:
-            movq $(0x0), \LengthReg
-            jmp Done
-
-    StartWithChar:
-        cmpb $(0x20), 1(\StrAddrReg)
-        je   ButNextIsSpace
-
-        StillChar:
-            incq \LengthReg
-            jmp  Done
-
-        ButNextIsSpace:
-            Prepare \StrAddrReg, \LengthReg, For, \Action
-    Done:
-        incq \StrAddrReg
+.macro PrintWordTest StartReg, EndReg 
+    subq \StartReg, \EndReg 
+    Print \StartReg, \EndReg 
 .endm
 
-.macro ReInitLexer
-    leaq InputBuffer(%rip), %r9
-    xorq %r8, %r8
-    movq InputBufferLength(%rip), %rcx
-
-    # Handles zero lengthed user input
-    test %rcx, %rcx
-    je   Apply_ForEachWord_Done
- .endm
-
-.macro LexWholeSequence 
-   
-    Apply_ForEachWord:
-        LocateWord %r9, %r8, Find
-        loop Apply_ForEachWord
-    Apply_ForEachWord_Done:
-
-.endm
