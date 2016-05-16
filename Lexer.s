@@ -73,7 +73,7 @@
 
 .endm
 
-.macro CheckLocateCondition StartReg, EndReg, LoopLabel, DoneLabel
+.macro AreWeDone StartReg, EndReg, LoopLabel, DoneLabel
 
     leaq InputBuffer(%rip), \EndReg
     cmpq \StartReg, \EndReg
@@ -90,14 +90,10 @@
 
     NextWord:
         LocateNextWord \StartReg, \EndReg
-        \Action \StartReg, \EndReg
-        CheckLocateCondition \StartReg, \EndReg, NextWord, AllDone 
+        subq \StartReg, \EndReg
+        call \Action 
+        AreWeDone \StartReg, \EndReg, NextWord, AllDone 
     AllDone:        
         
-.endm
-
-.macro PrintWordTest StartReg, EndReg 
-    subq \StartReg, \EndReg 
-    Print \StartReg, \EndReg 
 .endm
 

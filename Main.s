@@ -34,7 +34,7 @@ _main:
 
 
 #    ScanInputBuffer	
-    LocateAllWord %r8, %r9, PrintWordTest
+    LocateAllWord %r8, %r9, Find 
     ExecuteWholeStack
 
 #    jmp MainLoop
@@ -43,6 +43,7 @@ _main:
     syscall
 
 .align 8
+
 DictEnd:
 	.quad 0x000000000000
 

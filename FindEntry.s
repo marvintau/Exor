@@ -6,7 +6,6 @@
 .macro MatchLen LenReg, EntryReg, DoneLabel
 
     movq \LenReg, %rcx
-    incq %rcx
     cmpq (\EntryReg), %rcx
     jne \DoneLabel
 
@@ -22,12 +21,9 @@
 
 .macro MatchExactName EntryReg
 
-    
-    MatchLen %r8, \EntryReg, MatchExactNameDone
-    MatchChar %r9, \EntryReg, MatchExactNameDone
+    MatchLen %r9, \EntryReg, MatchExactNameDone
+    MatchChar %r8, \EntryReg, MatchExactNameDone
     MatchExactNameDone:
-
-   # decq %r8
 
 .endm
 
