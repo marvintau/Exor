@@ -25,7 +25,6 @@
     
     leaq InputBuffer(%rip), \StartReg
     addq InputBufferLength(%rip), \StartReg
-    decq \StartReg
 
 .endm
 
@@ -35,7 +34,11 @@
 
 .macro LocateNextWord StartReg, EndReg 
 
+    leaq InputBuffer(%rip), %rax 
+
     NextBigram:
+        cmpq \StartReg, %rax 
+        je   WordLocated
 
         cmpb $(0x20), (\StartReg)
         je   StartWithSpace
@@ -59,11 +62,6 @@
                 jmp WordLocated
 
         MoveCurr:
-
-            # There is a white space before the address
-            # of InputBuffer, which guarantees that the
-            # first word in buffer can be found without
-            # special handling.
 
             decq \StartReg
         
@@ -91,6 +89,7 @@
     NextWord:
         LocateNextWord \StartReg, \EndReg
         subq \StartReg, \EndReg
+        Print \StartReg, \EndReg
         call \Action 
         AreWeDone \StartReg, \EndReg, NextWord, AllDone 
     AllDone:        

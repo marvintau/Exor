@@ -29,7 +29,7 @@
     je   StackBaseReached    
 
     leaq -8(%r15), %r15
-    movq (%r15), %r14
+    movq %r15, %r14
     call Execute
 
     StackBaseReached:

@@ -2,10 +2,9 @@ Number:
     .ascii "%08X\n"
 
 InputBufferLength:
-    .quad   9    
+    .quad   9
     .byte   0x20
 InputBuffer:
-    .ascii "All Adam"
     .fill     64, 1, 0x20 
 InputBufferEnd:
 

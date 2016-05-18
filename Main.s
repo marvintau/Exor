@@ -33,7 +33,7 @@ _main:
 #MainLoop:
 
 
-#    ScanInputBuffer	
+    ScanInputBuffer	
     LocateAllWord %r8, %r9, Find 
     ExecuteWholeStack
 

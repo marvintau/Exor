@@ -8,11 +8,12 @@
 .macro ExecuteWord Reg
 
     movq (\Reg), %rcx
+    movq (%rcx), %rcx
     ForEachWordInEntry:
         push \Reg
         push %rcx
 
-        movq (\Reg, %rcx, 8), \Reg
+        leaq (\Reg, %rcx, 8), \Reg
         call Execute
 
         pop  %rcx
@@ -28,20 +29,11 @@ ExecuteWord:
 
 .macro Execute Reg
 
-    jmpq *\Reg
+    jmpq *(\Reg)
     ExecuteDone:
 
 .endm
 
-.macro Enter EntryReg
-
-    leaq 8(\EntryReg), \EntryReg
-    jmpq *\EntryReg
-
-.endm
-
-.macro EnterWord EntryReg
-.endm
 
 Execute:
     Execute %r14
