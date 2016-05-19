@@ -5,6 +5,7 @@ InputBufferLength:
     .quad   9
     .byte   0x20
 InputBuffer:
+    .ascii    "Adam God "
     .fill     64, 1, 0x20 
 InputBufferEnd:
 

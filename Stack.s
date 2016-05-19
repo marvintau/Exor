@@ -26,11 +26,9 @@
     
     leaq Stack(%rip), %r14
     cmpq %r14, %r15
-    je   StackBaseReached    
+    je StackBaseReached
 
     leaq -8(%r15), %r15
-    movq %r15, %r14
-    call Execute
 
     StackBaseReached:
 

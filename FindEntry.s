@@ -50,7 +50,7 @@
 
 .macro GoToDefinition EntryReg
     addq (\EntryReg), \EntryReg
-    leaq 8(\EntryReg), \EntryReg
+    leaq 16(\EntryReg), \EntryReg
 .endm
 
 .macro FindEntry EntryReg

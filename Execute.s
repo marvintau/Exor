@@ -1,7 +1,14 @@
+.macro Execute Reg
+
+    jmpq *(\Reg)
+    ExecuteDone:
+
+.endm
 
 .macro ExecuteWholeStack
     ExecuteNextElem:
 	PopStack 
+        Execute %r15
         jne ExecuteNextElem
 .endm
 
@@ -22,19 +29,5 @@
 
 .endm
 
-ExecuteWord:
-    ExecuteWord %r14
-    ret
 
 
-.macro Execute Reg
-
-    jmpq *(\Reg)
-    ExecuteDone:
-
-.endm
-
-
-Execute:
-    Execute %r14
-    ret

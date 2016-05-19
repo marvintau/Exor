@@ -32,7 +32,6 @@ _main:
 
 #MainLoop:
 
-
     ScanInputBuffer	
     LocateAllWord %r8, %r9, Find 
     ExecuteWholeStack
@@ -55,17 +54,17 @@ DictEnd:
 
 	StringDisplay Eve, "FIRST CREATED WOMAN\n"
 
-        EntryWordSequence All
+        EntryHeader All, Type.Word
 		.quad 2
 		.quad God
 		.quad Adam
-        EntryWordSequenceEnd All
+        EntryEnd All
 
-        EntryWordSequence All2
+        EntryHeader All2, Type.Word
 		.quad 3
 		.quad Eve
 		.quad Jesus
 		.quad All
-        EntryWordSequenceEnd All2
+        EntryEnd All2
 
 DictStart:
