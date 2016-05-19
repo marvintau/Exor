@@ -54,23 +54,9 @@
         leaq Content\name(%rip), %r13
         call PrintString
         pop  %r13
-        jmp ExecuteDone
-    
+   
+        ExecuteNext %r15
+ 
     EntryEnd \name
 .endm
 
-.macro EntryWordSequence name
-    EntryHeader \name
-        jmp EndWordSequence\name
-    StartOfWordSequence\name:
-.endm
-
-.macro EntryWordSequenceEnd name
-    EndWordSequence\name:
-        push %r14
-        leaq StartOfWordSequence\name(%rip), %r14
-        call ExecuteWord 
-        pop  %r14
-        jmp  ExecuteDone
-    EntryEnd \name
-.endm

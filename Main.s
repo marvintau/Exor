@@ -34,7 +34,7 @@ _main:
 
     ScanInputBuffer	
     LocateAllWord %r8, %r9, Find 
-    ExecuteWholeStack
+    ExecuteNext %r15 
 
 #    jmp MainLoop
 

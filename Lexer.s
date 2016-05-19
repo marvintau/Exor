@@ -89,7 +89,6 @@
     NextWord:
         LocateNextWord \StartReg, \EndReg
         subq \StartReg, \EndReg
-        Print \StartReg, \EndReg
         call \Action 
         AreWeDone \StartReg, \EndReg, NextWord, AllDone 
     AllDone:        
