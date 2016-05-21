@@ -35,28 +35,25 @@
 
 .endm
 
-.macro Next SeqReg
-
-    movq \SeqReg, %rax
-    leaq 8(\SeqReg), \SeqReg
-    jmp  *(%rax)
-    
-.endm
-
-
 .macro StringDisplay name, string
-    EntryHeader \name, Type.Code
+    EntryHeader Sub\name, Type.Code
     
-    jmp SkippedContent\name
-        String Content\name, "\string"
-    SkippedContent\name:
-        push %r13
-        leaq Content\name(%rip), %r13
-        call PrintString
-        pop  %r13
-   
-        ExecuteNext %r15
- 
+        jmp SkippedContent\name
+            String Content\name, "\string"
+        SkippedContent\name:
+            push %r13
+            leaq Content\name(%rip), %r13
+            call PrintString
+            pop  %r13
+       
+            ExecuteNextWord %r12
+     
+    EntryEnd Sub\name
+
+    EntryHeader \name, Type.Word
+        .quad EnterWord 
+        .quad Sub\name
+        .quad ExitWord
     EntryEnd \name
 .endm
 

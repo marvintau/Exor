@@ -82,7 +82,7 @@
 
 .endm
 
-.macro LocateAllWord StartReg, EndReg, Action
+.macro ExecuteAllWords StartReg, EndReg, Action
 
     InitLocateWord \StartReg, \EndReg
 

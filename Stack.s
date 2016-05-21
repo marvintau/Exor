@@ -22,16 +22,14 @@
     leaq  8(%r15), %r15
 .endm
 
-.macro PopStack Reg
+.macro PopStack Reg, StackBaseReachedHandler
     
     leaq Stack(%rip), %r14
     cmpq %r14, %r15
-    je StackBaseReached
 
     leaq -8(%r15), %r15
     movq %r15, \Reg
 
-    StackBaseReached:
 
 .endm
 

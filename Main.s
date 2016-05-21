@@ -30,13 +30,15 @@ PrintString:
 _main:
     InitStack
 
-#MainLoop:
+MainLoop:
 
-    ScanInputBuffer	
-    LocateAllWord %r8, %r9, Find 
-    ExecuteNext %r15 
+    #ScanInputBuffer	
+    ExecuteAllWords %r8, %r9, Find 
+    
 
-#    jmp MainLoop
+    ExecuteDone:
+
+    jmp MainLoop
 
     movq $SyscallExit, %rax
     syscall
@@ -54,17 +56,28 @@ DictEnd:
 
 	StringDisplay Eve, "FIRST CREATED WOMAN\n"
 
-        EntryHeader All, Type.Word
-		.quad 2
-		.quad God
-		.quad Adam
-        EntryEnd All
+        EntryHeader TestCode, Type.Code
+            movq $(0xbeef), %rbx
+        EntryEnd TestCode
 
-        EntryHeader All2, Type.Word
-		.quad 3
-		.quad Eve
-		.quad Jesus
-		.quad All
-        EntryEnd All2
+        EntryHeader TestWord, Type.Word
+            .quad EnterWord
+            .quad TestCode
+            .quad ExitWord
+        EntryEnd TestWord
+
+        EntryHeader TestWordS, Type.Word
+            .quad EnterWord
+            .quad TestWord
+            .quad ExitWord
+        EntryEnd TestWordS
+
+
+
+        EntryHeader Done, Type.Word
+            .quad EnterWord
+            .quad ExitExecution 
+            .quad ExitWord
+        EntryEnd Done
 
 DictStart:
