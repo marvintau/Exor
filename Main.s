@@ -57,12 +57,13 @@ DictEnd:
 	StringDisplay Eve, "FIRST CREATED WOMAN\n"
 
         EntryHeader TestCode, Type.Code
-            movq $(0xbeef), %rbx
+            movq $(0xbeef), %r11
+            ExecuteNextWord
         EntryEnd TestCode
 
         EntryHeader TestWord, Type.Word
             .quad EnterWord
-            .quad TestCode
+            .quad Eve 
             .quad ExitWord
         EntryEnd TestWord
 
@@ -72,12 +73,5 @@ DictEnd:
             .quad ExitWord
         EntryEnd TestWordS
 
-
-
-        EntryHeader Done, Type.Word
-            .quad EnterWord
-            .quad ExitExecution 
-            .quad ExitWord
-        EntryEnd Done
 
 DictStart:

@@ -73,8 +73,6 @@
                 GoToDefinition \EntryReg
 
                 movq \EntryReg, %r12
-                leaq ExecuteWordDone(%rip), %r13
-                leaq -8(%r13), %r13
                 jmpq *(%r12)
 
                 ExecuteWordDone:
