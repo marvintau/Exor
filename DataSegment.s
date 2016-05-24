@@ -1,5 +1,5 @@
 InputBufferLength:
-    .quad   10
+    .quad   10 
     .byte   0x20
 InputBuffer:
     .ascii    "TestWordS "

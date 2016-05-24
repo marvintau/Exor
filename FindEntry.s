@@ -48,9 +48,13 @@
     leaq (%r10, \EntryReg), \EntryReg
 .endm
 
+# Let EntryReg stores the address of definition.
+# The offset depends on the content between the
+# header label and content label.
+
 .macro GoToDefinition EntryReg
     addq (\EntryReg), \EntryReg
-    leaq 16(\EntryReg), \EntryReg
+    leaq 8(\EntryReg), \EntryReg
 .endm
 
 .macro FindEntry EntryReg
@@ -73,7 +77,7 @@
                 GoToDefinition \EntryReg
 
                 movq \EntryReg, %r12
-                jmpq *(%r12)
+                jmp *(%r12)
 
                 ExecuteWordDone:
 
