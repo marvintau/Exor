@@ -23,10 +23,6 @@
 
 # r15 and r14: Reserved for string scan. 
 
-PrintString:
-	Print %r13, -8(%r13)
-	ret
-
 _main:
     InitStack
 
@@ -35,9 +31,6 @@ MainLoop:
     #ScanInputBuffer	
     ExecuteAllWords %r8, %r9, Find 
     
-
-    ExecuteDone:
-
     jmp MainLoop
 
     movq $SyscallExit, %rax
@@ -56,13 +49,21 @@ DictEnd:
 
 	StringDisplay Eve, "FIRST CREATED WOMAN\n"
 
+        Code Exit
+            PopStack %r13
+        Beef:
+        CodeEnd Exit
+
+        Code Quit
+            jmp ExecutionDone
+        CodeEnd Quit
+
         Code TestCode
             movq $(0xbeef), %r11
-            ExecuteNextWord
         CodeEnd TestCode
 
         Word TestWord
-            .quad Eve 
+            .quad TestCode 
         WordEnd TestWord
 
         Word TestWordS

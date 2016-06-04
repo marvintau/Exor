@@ -76,10 +76,10 @@
 
                 GoToDefinition \EntryReg
 
-                movq \EntryReg, %r12
-                jmp *(%r12)
+                movq \EntryReg, %r13
+                jmp  EnterFirstWord
 
-                ExecuteWordDone:
+                ExecutionDone:
 
             pop  \EntryReg
             jmp LookUpDone
@@ -93,5 +93,5 @@
 .endm
 
 Find:
-    FindEntry %r13
+    FindEntry %r14
     ret

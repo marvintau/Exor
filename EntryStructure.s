@@ -64,7 +64,7 @@
 .endm
 
 .macro WordEnd name
-    .quad ExitWord
+    .quad Exit
     EntryEnd \name 
 .endm
 
@@ -74,11 +74,11 @@
         jmp SkippedContent\name
             String Content\name, "\string"
         SkippedContent\name:
-            push %r13
-            leaq Content\name(%rip), %r13
-            call PrintString
-            pop  %r13
-       
+            push %r15
+            leaq Content\name(%rip), %r15
+	    Print %r15, -8(%r15)
+            pop  %r15       
+
             ExecuteNextWord %r12
      
     CodeEnd Sub\name

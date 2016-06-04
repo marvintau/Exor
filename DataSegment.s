@@ -1,10 +1,13 @@
 InputBufferLength:
-    .quad   10 
+    .quad   9
     .byte   0x20
 InputBuffer:
-    .ascii    "TestWordS "
+    .ascii    "TestWord "
     .fill     64, 1, 0x20 
 InputBufferEnd:
+
+QuitRoutineHolder:
+    .quad    0
 
 Stack:
     .rept    16   

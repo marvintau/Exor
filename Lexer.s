@@ -69,6 +69,9 @@
 
     WordLocated:
 
+        #push \StartReg
+        #push \EndReg
+
 .endm
 
 .macro AreWeDone StartReg, EndReg, LoopLabel, DoneLabel
@@ -94,4 +97,5 @@
     AllDone:        
         
 .endm
+
 

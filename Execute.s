@@ -62,20 +62,47 @@ EnterWord:
     movq   %r12,  %r13
     ExecuteNextWord
 
-# EXITWORD
+# ENTER FIRST WORD
+# ======================
+# Slightly differing to EnterWord, when EnterFirstWord
+# is called, r13 is not holding the address of caller.
+# Therefore, considering where we are going after the
+# last ExecuteNextWord called, r12 should be pointing
+# to a code word that jumps back to FindEntry. 
+
+# After moving the content of r13 into r12, the change
+# of r13 is no more interested. Thus the subroutine can
+# be seen as
+
+# PopStack %r13
+# movq  (%r13), %r12
+# jmp  *(%r12)
+
+# If %r12 points to the beginning of the quit entry, the
+# popped r13 should be pointing to a place that holds the
+# address of the memory, that holds the address of quit
+# entry. Because quit is supposed to be called by another
+# word, and we have to mimic that.
+
+EnterFirstWord:
+    leaq ExitExec(%rip), %r13
+
+    # %r14 is the dedicated entry pointer in FindEntry.s
+    movq %r14, %r12
+    jmp *(%r12)
+        
+
+# ExitExec
 # =======================
 
+ExitExec:
 
-ExitWord:
-    PopStack %r13 
-    ExecuteNextWord
+    # Now r12 holds the pointer links to the ADDRESS
+    # (ExitExecSecondIndirect), that points to executable
+    # code, which jumps back to the remaining code of
+    # FindEntry, which supposed to be replaced with 
+    # the resetter in the future.
 
-StartExecution:
-    PopStack %r13
-    leaq -8(%r13), %r13
-    ExecuteNextWord
-        
-ExitExecution:
-    jmp ExecuteDone
-
-   
+    .quad ExitExecSecondIndirect
+ExitExecSecondIndirect:
+    jmp ExecutionDone
