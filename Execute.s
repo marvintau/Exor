@@ -64,8 +64,8 @@ BeforeExecute:
 
 # ENTER FIRST WORD
 # ======================
-# Slightly differing to EnterWord, when EnterFirstWord
-# is called, r13 is not holding the address of caller.
+# Slightly differing from EnterWord, r13 doesn't hold
+# the address of caller when entering EnterFirstWord.
 # Therefore, considering where we are going after the
 # last ExecuteNextWord called, r12 should be pointing
 # to a code word that jumps back to FindEntry. 
@@ -78,11 +78,17 @@ BeforeExecute:
 # movq  (%r13), %r12
 # jmp  *(%r12)
 
-# If %r12 points to the beginning of the quit entry, the
-# popped r13 should be pointing to a place that holds the
-# address of the memory, that holds the address of quit
-# entry. Because quit is supposed to be called by another
-# word, and we have to mimic that.
+# Notably, there is not other word that refers the Quit
+# entry. If the implementation of Quit entry is merely
+# a code word that jumps to the label that continues the
+# FindEntry, Then there will be a problem, that the popped
+# r13 will point to Quit, and r12 will point to the label
+# ActualCodeOfQuit, and jump *(%r12) would take the first
+# instruction right after ActualCodeOfQuit as another
+# address to jump to. That's why we add another indirect
+# jump in the Quit entry. Alternatively we may use another
+# quad to refer to Quit label, but apparently modifying
+# Quit entry is more convenient.
 
 EnterFirstWord:
     leaq Quit(%rip), %r13
