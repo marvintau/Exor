@@ -77,6 +77,7 @@
 .macro AreWeDone StartReg, EndReg, LoopLabel, DoneLabel
 
     leaq InputBuffer(%rip), \EndReg
+CheckEndCondition:
     cmpq \StartReg, \EndReg
     je   \DoneLabel
     

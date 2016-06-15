@@ -27,7 +27,6 @@
 # words, then this should be EnterWord.
 
 .macro ExecuteNextWord
-
     movq  (%r13), %r12
     leaq 8(%r13), %r13 
     jmpq *(%r12)
@@ -60,6 +59,7 @@ EnterWord:
     PushStack %r13
     leaq 8(%r12), %r12
     movq   %r12,  %r13
+BeforeExecute:
     ExecuteNextWord
 
 # ENTER FIRST WORD
@@ -85,24 +85,8 @@ EnterWord:
 # word, and we have to mimic that.
 
 EnterFirstWord:
-    leaq ExitExec(%rip), %r13
+    leaq Quit(%rip), %r13
 
     # %r14 is the dedicated entry pointer in FindEntry.s
     movq %r14, %r12
     jmp *(%r12)
-        
-
-# ExitExec
-# =======================
-
-ExitExec:
-
-    # Now r12 holds the pointer links to the ADDRESS
-    # (ExitExecSecondIndirect), that points to executable
-    # code, which jumps back to the remaining code of
-    # FindEntry, which supposed to be replaced with 
-    # the resetter in the future.
-
-    .quad ExitExecSecondIndirect
-ExitExecSecondIndirect:
-    jmp ExecutionDone

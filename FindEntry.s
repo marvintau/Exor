@@ -76,7 +76,6 @@
 
                 GoToDefinition \EntryReg
 
-                movq \EntryReg, %r13
                 jmp  EnterFirstWord
 
                 ExecutionDone:

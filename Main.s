@@ -26,12 +26,13 @@
 _main:
     InitStack
 
-MainLoop:
+#MainLoop:
 
     #ScanInputBuffer	
     ExecuteAllWords %r8, %r9, Find 
     
-    jmp MainLoop
+    #jmp MainLoop
+Don:
 
     movq $SyscallExit, %rax
     syscall
@@ -41,34 +42,19 @@ MainLoop:
 DictEnd:
 	.quad 0x000000000000
 
-	StringDisplay God, "HE IS WHO HE IS\n"
-
 	StringDisplay Jesus, "BELOVED SON\n"
-
-	StringDisplay Adam, "FIRST CREATED MAN\n"
-
-	StringDisplay Eve, "FIRST CREATED WOMAN\n"
 
         Code Exit
             PopStack %r13
-        Beef:
         CodeEnd Exit
 
         Code Quit
             jmp ExecutionDone
         CodeEnd Quit
 
-        Code TestCode
-            movq $(0xbeef), %r11
-        CodeEnd TestCode
-
-        Word TestWord
-            .quad TestCode 
-        WordEnd TestWord
-
-        Word TestWordS
-            .quad TestWord
-        WordEnd TestWordS
+        Word JesusWord
+            .quad Jesus 
+        WordEnd JesusWord
 
 
 DictStart:

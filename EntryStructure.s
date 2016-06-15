@@ -64,7 +64,7 @@
 .endm
 
 .macro WordEnd name
-    .quad Exit
+    .quad Exit 
     EntryEnd \name 
 .endm
 
