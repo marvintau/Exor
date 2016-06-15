@@ -57,8 +57,8 @@
 
 EnterWord:
     PushStack %r13
-    leaq 8(%r12), %r12
-    movq   %r12,  %r13
+    addq $(0x8),  %r12
+    movq  %r12,  %r13
 BeforeExecute:
     ExecuteNextWord
 

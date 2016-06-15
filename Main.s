@@ -46,9 +46,12 @@ DictEnd:
 
         Code Exit
             PopStack %r13
+        Beef:
         CodeEnd Exit
 
         Code Quit
+            .quad RealQuit
+        RealQuit:
             jmp ExecutionDone
         CodeEnd Quit
 

@@ -28,7 +28,7 @@
     cmpq %r14, %r15
 
     leaq -8(%r15), %r15
-    movq %r15, \Reg
+    movq (%r15), \Reg
 
 
 .endm
