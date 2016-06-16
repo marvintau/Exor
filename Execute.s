@@ -19,7 +19,7 @@
 # (the parentheses). If we are going to use it, %r12 has
 # to POINT TO ANOTHER ADDRESS TO JUMP TO. (Ponder it!)
 
-# And you are right. %r12 is never points to an address
+# And you are right. %r12 is never pointing to an address
 # that you can jump to and execute, but a quad pointing
 # to another piece of code. If the entry has executable 
 # code, then this quad should be the starting address of
@@ -57,9 +57,15 @@
 
 EnterWord:
     PushStack %r13
-    addq $(0x8),  %r12
-    movq  %r12,  %r13
-BeforeExecute:
+    leaq 8(%r12),  %r12
+    movq   %r12,   %r13
+    ExecuteNextWord
+
+
+EnterSpecificWord:
+    PushStack %r13
+    leaq (%r12, %r11, 8), %r12
+    movq  %r12, %r13
     ExecuteNextWord
 
 # ENTER FIRST WORD

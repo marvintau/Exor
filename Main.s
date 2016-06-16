@@ -12,8 +12,9 @@
 .include "Lexer.s"
 .include "Stack.s"
 .include "FindEntry.s"
-.include "EntryStructure.s"
 .include "Execute.s"
+
+.include "Dictionary.s"
 
 .globl _main
 
@@ -32,32 +33,6 @@ _main:
     ExecuteAllWords %r8, %r9, Find 
     
     #jmp MainLoop
-Don:
 
     movq $SyscallExit, %rax
     syscall
-
-.align 8
-
-DictEnd:
-	.quad 0x000000000000
-
-	StringDisplay Jesus, "BELOVED SON\n"
-
-        Code Exit
-            PopStack %r13
-        Beef:
-        CodeEnd Exit
-
-        Code Quit
-            .quad RealQuit
-        RealQuit:
-            jmp ExecutionDone
-        CodeEnd Quit
-
-        Word JesusWord
-            .quad Jesus 
-        WordEnd JesusWord
-
-
-DictStart:

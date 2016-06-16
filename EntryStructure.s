@@ -68,23 +68,32 @@
     EntryEnd \name 
 .endm
 
-.macro StringDisplay name, string
-    Code Sub\name
+# CONDITIONAL BRANCHING WORD
+# =======================
+# Forth has its own version of branching, the conditional branching word
+# is merely for the convenience of writing built-in words. We employ the
+# EnterSpecificWord subroutine, which is handy for implementing if-then
+# and switch-case mechanism.
 
-        jmp SkippedContent\name
-            String Content\name, "\string"
-        SkippedContent\name:
-            push %r15
-            leaq Content\name(%rip), %r15
-	    Print %r15, -8(%r15)
-            pop  %r15       
+# And of course, you have to write .Exit right after each word you want
+# to execute, just the break in each case of a switch-case block.
 
-            ExecuteNextWord %r12
-     
-    CodeEnd Sub\name
+# And by the way, the ConditionalWord uses same end as ordinary word.
 
-    Word \name
-        .quad Sub\name
-    WordEnd \name
+.macro ConditionalWord name
+    EntryHeader \name
+        .quad EnterSpecificWord
 .endm
 
+
+# LOOPING WORD
+# ======================
+# Even though Conditional Branching provide us a great freedom of executing
+# words, it's still forward executing. LoopEnd enables to jump back to the
+# starting of current word. But currently the problem is there is no way to
+# escape the loop yet.
+
+.macro LoopEnd name
+    .quad LoopExit
+    EntryEnd \name
+.endm
