@@ -105,6 +105,35 @@ CheckEndCondition:
 
 .endm
 
+.macro ParseHex StartReg, LenReg
+
+    xorq  %rax, %rax
+    xorq  %rbx, %rbx
+
+    xorq  %rcx, %rcx
+
+    ParseHexForEachDigit:
+        imul $0x10, %rax
+        
+        movzbq (\StartReg, %rcx), %rbx
+        cmpb $0x60,  %bl
+        jg Hex
+            subq $0x30, %rbx
+            jmp ParseHexCheckDone
+        Hex:
+            subq $0x57, %rbx
+
+        ParseHexCheckDone:
+        
+        addq %rbx, %rax 
+        
+        incq %rcx
+        cmpq %rcx, \LenReg
+
+        jne ParseHexForEachDigit
+
+.endm
+
 .macro ExecuteAllWords StartReg, EndReg, Action
 
     InitLocateWord \StartReg, \EndReg
@@ -115,9 +144,15 @@ CheckEndCondition:
         
         MatchNumber \StartReg, \EndReg
         cmpb $1, %ah
+    NumberCheck:
         jg RecognizedAsWord
-            ParseDecimal \StartReg, \EndReg 
-            jmp FirstMatchDone
+            je RecognizedAsHex
+                ParseDecimal \StartReg, \EndReg 
+                jmp FirstMatchDone
+
+            RecognizedAsHex:
+                ParseHex \StartReg, \EndReg
+                jmp FirstMatchDone
 
         RecognizedAsWord:
             call \Action 

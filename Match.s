@@ -21,7 +21,7 @@
 .macro MatchNumber BuffReg, LenReg
 
     movq \LenReg, %rcx
-    xorb %ah, %ah
+    xorq %rax, %rax
 
     ForEachDigit:
         movb -1(\BuffReg, %rcx), %al
@@ -31,6 +31,7 @@
         jg NotHex
 
         movb $1, %ah
+        jmp IsDigit
 
         NotHex:
             cmpb $0x30, %al
