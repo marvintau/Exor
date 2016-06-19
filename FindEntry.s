@@ -1,32 +1,4 @@
 
-# ENTRY NAME MATCHING
-# ===================
-# exclusively used by FindEntry.
-
-.macro MatchLen LenReg, EntryReg, DoneLabel
-
-    movq \LenReg, %rcx
-    cmpq (\EntryReg), %rcx
-    jne \DoneLabel
-
-.endm
-
-.macro MatchChar BuffReg, EntryReg, DoneLabel
-    ForEachCharacter:		
-        movb  -1(\BuffReg, %rcx), %al
-        cmpb  7(\EntryReg, %rcx), %al
-        jne \DoneLabel
-    loop ForEachCharacter
-.endm
-
-.macro MatchExactName EntryReg
-
-    MatchLen %r9, \EntryReg, MatchExactNameDone
-    MatchChar %r8, \EntryReg, MatchExactNameDone
-    MatchExactNameDone:
-
-.endm
-
 # ENTRY TRAVERSING ROUTINES
 # =========================
 # also execlusively used by FindEntry
@@ -94,3 +66,5 @@
 Find:
     FindEntry %r14
     ret
+
+

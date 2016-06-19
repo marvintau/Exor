@@ -1,3 +1,5 @@
+.include "Match.s"
+
 # Lexer uses r8 and r9 register
 
 .macro ScanInputBuffer
@@ -80,6 +82,26 @@ CheckEndCondition:
     
     decq \StartReg
     jmp  \LoopLabel
+.endm
+
+.macro ParseDecimal StartReg, LenReg
+
+    xorq  %rax, %rax
+    xorq  %rbx, %rbx
+
+    xorq  %rcx, %rcx
+
+    ParseDecimalForEachDigit:
+        imul $10, %rax
+        
+        movzbq (\StartReg, %rcx), %rbx
+        subq $0x30, %rbx
+        addq %rbx, %rax 
+        
+        incq %rcx
+        cmpq %rcx, \LenReg
+
+        jne ParseDecimalForEachDigit
 
 .endm
 
@@ -90,7 +112,18 @@ CheckEndCondition:
     NextWord:
         LocateNextWord \StartReg, \EndReg
         subq \StartReg, \EndReg
-        call \Action 
+        
+        MatchNumber \StartReg, \EndReg
+        cmpb $1, %ah
+        jg RecognizedAsWord
+            ParseDecimal \StartReg, \EndReg 
+            jmp FirstMatchDone
+
+        RecognizedAsWord:
+            call \Action 
+        
+        FirstMatchDone:
+
         AreWeDone \StartReg, \EndReg, NextWord, AllDone 
     AllDone:        
         
