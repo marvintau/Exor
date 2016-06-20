@@ -134,7 +134,7 @@ CheckEndCondition:
 
 .endm
 
-.macro ExecuteAllWords StartReg, EndReg, Action
+.macro ExecuteAllWords StartReg, EndReg
 
     InitLocateWord \StartReg, \EndReg
 
@@ -144,6 +144,7 @@ CheckEndCondition:
         
         MatchNumber \StartReg, \EndReg
         cmpb $1, %ah
+
     NumberCheck:
         jg RecognizedAsWord
             je RecognizedAsHex
@@ -155,7 +156,7 @@ CheckEndCondition:
                 jmp FirstMatchDone
 
         RecognizedAsWord:
-            call \Action 
+            call Find 
         
         FirstMatchDone:
 

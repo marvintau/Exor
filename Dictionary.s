@@ -5,4 +5,7 @@ DictEnd:
     .include "BuiltinEntries.s"
     .include "StringDisplay.s"
 
+    Code ExecAll
+    CodeEnd ExecAll
+
 DictStart:

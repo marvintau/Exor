@@ -30,9 +30,9 @@ _main:
 #MainLoop:
 
     #ScanInputBuffer	
-    ExecuteAllWords %r8, %r9, Find 
+    ExecuteAllWords %r8, %r9 
     
-    #jmp MainLoop
+    SystemExitLabel:
 
     movq $SyscallExit, %rax
     syscall

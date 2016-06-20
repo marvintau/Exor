@@ -48,7 +48,7 @@
 
                 GoToDefinition \EntryReg
 
-                jmp  EnterFirstWord
+                jmp ExecuteFirstWord 
 
                 ExecutionDone:
 

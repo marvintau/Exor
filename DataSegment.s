@@ -2,7 +2,7 @@ InputBufferLength:
     .quad   9
     .byte   0x20
 InputBuffer:
-    .ascii    "ff"
+    .ascii    "JesusWord"
     .fill     64, 1, 0x20 
 InputBufferEnd:
 

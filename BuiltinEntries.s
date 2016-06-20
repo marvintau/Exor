@@ -20,4 +20,8 @@ RealQuit:
     jmp ExecutionDone
 CodeEnd Quit
 
-
+Code SystemExit 
+    .quad RealSystemExit 
+RealSystemExit:
+    jmp SystemExitLabel 
+CodeEnd SystemExit

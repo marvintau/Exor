@@ -96,7 +96,7 @@ EnterSpecificWord:
 # quad to refer to Quit label, but apparently modifying
 # Quit entry is more convenient.
 
-EnterFirstWord:
+ExecuteFirstWord:
     leaq Quit(%rip), %r13
 
     # %r14 is the dedicated entry pointer in FindEntry.s
