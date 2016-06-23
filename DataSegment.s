@@ -1,8 +1,8 @@
 InputBufferLength:
-    .quad   9
+    .quad   15 
     .byte   0x20
 InputBuffer:
-    .ascii    "JesusWord"
+    .ascii    "TestBranch 2"
     .fill     64, 1, 0x20 
 InputBufferEnd:
 
@@ -14,3 +14,9 @@ Stack:
     .quad    0
     .endr
 StackEnd:
+
+DataStack:
+    .rept    16
+    .quad    0
+    .endr
+DataStackEnd:

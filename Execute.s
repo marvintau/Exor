@@ -61,13 +61,6 @@ EnterWord:
     movq   %r12,   %r13
     ExecuteNextWord
 
-
-EnterSpecificWord:
-    PushStack %r13
-    leaq (%r12, %r11, 8), %r12
-    movq  %r12, %r13
-    ExecuteNextWord
-
 # ENTER FIRST WORD
 # ======================
 # Slightly differing from EnterWord, r13 doesn't hold
@@ -100,5 +93,5 @@ ExecuteFirstWord:
     leaq Quit(%rip), %r13
 
     # %r14 is the dedicated entry pointer in FindEntry.s
-    movq %r14, %r12
+    movq %r11, %r12
     jmp *(%r12)

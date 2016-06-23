@@ -5,7 +5,19 @@ DictEnd:
     .include "BuiltinEntries.s"
     .include "StringDisplay.s"
 
-    Code ExecAll
-    CodeEnd ExecAll
+    Word TestBranch
+        .quad Branch
+        .quad Jesus 
+        .quad Exit
+        .quad Maria
+    WordEnd TestBranch
+
+    Code Move
+        movq $(0xdead), %r11
+    CodeEnd Move
+
+    Code Mov2
+        movq $(0xbeef), %r11
+    CodeEnd Mov2
 
 DictStart:

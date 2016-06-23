@@ -25,6 +25,7 @@
 # r15 and r14: Reserved for string scan. 
 
 _main:
+    InitDataStack
     InitStack
 
 #MainLoop:
@@ -33,6 +34,5 @@ _main:
     ExecuteAllWords %r8, %r9 
     
     SystemExitLabel:
-
     movq $SyscallExit, %rax
     syscall

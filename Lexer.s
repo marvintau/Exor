@@ -102,6 +102,9 @@ CheckEndCondition:
         cmpq %rcx, \LenReg
 
         jne ParseDecimalForEachDigit
+CheckRax:
+
+    PushDataStack %rax
 
 .endm
 
@@ -132,11 +135,11 @@ CheckEndCondition:
 
         jne ParseHexForEachDigit
 
+    PushDataStack %rax
+
 .endm
 
 .macro ExecuteAllWords StartReg, EndReg
-
-    InitLocateWord \StartReg, \EndReg
 
     NextWord:
         LocateNextWord \StartReg, \EndReg

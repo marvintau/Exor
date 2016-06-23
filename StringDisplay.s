@@ -15,10 +15,12 @@
 
     Word \name
         .quad Sub\name
-    LoopEnd \name
+    WordEnd \name
 .endm
 
 StringDisplay Jesus, "BELOVED SON\n"
+
+StringDisplay Maria, "THE VIRGIN\n"
 
 Word JesusWord
     .quad Jesus 
