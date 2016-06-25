@@ -25,37 +25,46 @@ Code ScanInputBuffer
     movq    %rax, InputBufferLength(%rip)
 CodeEnd ScanInputBuffer
 
-Code ExecuteSession
+Code LocateNextWord
+    LocateNextWord %r8, %r9
+    subq %r8, %r9
+CodeEnd LocateNextWord
+
+Code MatchNumber
+    MatchNumber %r8, %r9
+    cmpb $1, %ah
+CodeEnd MatchNumber
+
+Code LiteralCheck
+    jg RecognizedAsWord
+        je RecognizedAsHex
+            ParseDecimal %r8, %r9 
+            jmp FirstMatchDone
+
+        RecognizedAsHex:
+            ParseHex %r8, %r9
+            jmp FirstMatchDone
+
+    RecognizedAsWord:
+        call Find 
+    
+    FirstMatchDone:
+CodeEnd LiteralCheck
+
+Word ExecuteSession
     # %r8 as Buffer Start Register, which holds the starting position
     # where lexer starts (which actually is the end of buffer). While
     # %r9 the Buffer End register, which sometimes holds the position
     # where the word starts, sometimes holds the length of the word
     
-    NextWord:
-        LocateNextWord %r8, %r9
-        subq %r8, %r9
-        
-        MatchNumber %r8, %r9
-        cmpb $1, %ah
+    #    NextWord:
+    .quad LocateNextWord
+    .quad MatchNumber
+    .quad LiteralCheck 
 
-    NumberCheck:
-        jg RecognizedAsWord
-            je RecognizedAsHex
-                ParseDecimal %r8, %r9 
-                jmp FirstMatchDone
-
-            RecognizedAsHex:
-                ParseHex %r8, %r9
-                jmp FirstMatchDone
-
-        RecognizedAsWord:
-            call Find 
-        
-        FirstMatchDone:
-
-        AreWeDone %r8, %r9, NextWord, AllDone 
-    AllDone:        
- CodeEnd ExecuteSession
+    #       AreWeDone %r8, %r9, NextWord, AllDone 
+    #   AllDone:        
+WordEnd ExecuteSession
 
 Word InitScan
     .quad InitLocateWord
