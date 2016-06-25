@@ -4,6 +4,7 @@ DictEnd:
     .quad 0x000000000000
     .include "BuiltinEntries.s"
     .include "StringDisplay.s"
+    .include "LexerEntries.s"
 
     Word TestBranch
         .quad Branch

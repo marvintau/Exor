@@ -35,25 +35,12 @@
 
 # ENTERWORD
 # =====================
-# Voila! EnterWord does is the final destination of the
-# jumping, and EnterWord will be executed right after we
-# enter EACH word, no matter it contains instructions or
-# other word address.
-
-# Remember the r12 still stores the quad that points to
-# the address of EnterWord, r12 will be pointing to the
-# next address, either another entry or executable code.
-
-# Next up, r13 is assigned with r12 too. Combining with
-# the first instruction of ExecuteNextWord, and discard
-# the operation over r13, we will have
-#
-# leaq 8(%r12), %r12
-# movq  (%r12), %r12
-# jmpq *(%r12)
-#
-# That pretty explains how do we enter the body of the
-# entry.
+# EnterWord is a subroutine that essentially does two things
+# First it stores the original Return Address Register (RAR),
+# which similar to the frame register that stores the caller
+# address in function call. Secondly it leads the instruction
+# pointer points to the referred entry by changing the Entry
+# Register (ER).
 
 EnterWord:
     PushStack %r13
@@ -63,35 +50,22 @@ EnterWord:
 
 # ENTER FIRST WORD
 # ======================
-# Slightly differing from EnterWord, r13 doesn't hold
-# the address of caller when entering EnterFirstWord.
-# Therefore, considering where we are going after the
-# last ExecuteNextWord called, r12 should be pointing
-# to a code word that jumps back to FindEntry. 
+# Since there is no prior word entry referring, we just stores
+# the address of exiting routine in the RAR, instead of pushing
+# another address into it.
 
-# After moving the content of r13 into r12, the change
-# of r13 is no more interested. Thus the subroutine can
-# be seen as
+ExecuteLexedWord:
+    PushStack %r13
+    leaq ReturnLexer(%rip), %r13
 
-# PopStack %r13
-# movq  (%r13), %r12
-# jmp  *(%r12)
-
-# Notably, there is not other word that refers the Quit
-# entry. If the implementation of Quit entry is merely
-# a code word that jumps to the label that continues the
-# FindEntry, Then there will be a problem, that the popped
-# r13 will point to Quit, and r12 will point to the label
-# ActualCodeOfQuit, and jump *(%r12) would take the first
-# instruction right after ActualCodeOfQuit as another
-# address to jump to. That's why we add another indirect
-# jump in the Quit entry. Alternatively we may use another
-# quad to refer to Quit label, but apparently modifying
-# Quit entry is more convenient.
-
-ExecuteFirstWord:
-    leaq Quit(%rip), %r13
-
-    # %r14 is the dedicated entry pointer in FindEntry.s
     movq %r11, %r12
     jmp *(%r12)
+
+
+ExecuteSystemWord:
+    leaq SystemExit(%rip), %r13
+    
+    movq %r11, %r12
+    jmp  *(%r12)
+
+

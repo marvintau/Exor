@@ -2,7 +2,7 @@ InputBufferLength:
     .quad   15 
     .byte   0x20
 InputBuffer:
-    .ascii    "TestBranch 2"
+    .ascii    "Jesus"
     .fill     64, 1, 0x20 
 InputBufferEnd:
 

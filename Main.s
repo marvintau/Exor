@@ -22,7 +22,6 @@
 # of the macros, we are going to make some registers for special
 # purpose, and not going to specify as arguments.
 
-# r15 and r14: Reserved for string scan. 
 
 _main:
     InitDataStack
@@ -30,9 +29,14 @@ _main:
 
 #MainLoop:
 
-    #ScanInputBuffer	
-    ExecuteAllWords %r8, %r9 
+    # Enter the main routine
+    leaq InitScan(%rip), %r11 
+    jmp ExecuteSystemWord
     
     SystemExitLabel:
+
+    #ScanInputBuffer	
+    #ExecuteAllWords %r8, %r9 
+    
     movq $SyscallExit, %rax
     syscall
