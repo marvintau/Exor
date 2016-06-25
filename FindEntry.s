@@ -51,6 +51,9 @@
                 jmp ExecuteLexedWord 
 
                 ExecutionDone:
+                    # since we pushed the r13 onto stack
+                    @ when entering ExecuteLexedWord
+                    PopStack %r13
 
             pop  \EntryReg
             jmp LookUpDone
