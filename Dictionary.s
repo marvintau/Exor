@@ -7,7 +7,6 @@ DictEnd:
     .include "LexerEntries.s"
 
     Word TestBranch
-        .quad Branch
         .quad Jesus 
         .quad Exit
         .quad Maria

@@ -25,10 +25,10 @@ Code ScanInputBuffer
     movq    %rax, InputBufferLength(%rip)
 CodeEnd ScanInputBuffer
 
-Code LocateNextWord
-    LocateNextWord %r8, %r9
+Code LocateWordBound
+    LocateWordBound %r8, %r9
     subq %r8, %r9
-CodeEnd LocateNextWord
+CodeEnd LocateWordBound
 
 Code MatchNumber
     MatchNumber %r8, %r9
@@ -51,19 +51,31 @@ Code LiteralCheck
     FirstMatchDone:
 CodeEnd LiteralCheck
 
+Code IsEndReached
+    leaq InputBuffer(%rip), %r9 
+    cmpq %r8, %r9
+    je Reached
+        decq %r8
+        movq $(0x1), %rax
+        jmp ReachedDone
+    Reached:    
+        movq $(0x0), %rax
+    ReachedDone:
+        PushDataStack %rax
+CodeEnd IsEndReached
+
 Word ExecuteSession
     # %r8 as Buffer Start Register, which holds the starting position
     # where lexer starts (which actually is the end of buffer). While
     # %r9 the Buffer End register, which sometimes holds the position
     # where the word starts, sometimes holds the length of the word
     
-    #    NextWord:
-    .quad LocateNextWord
+    .quad LocateWordBound
     .quad MatchNumber
     .quad LiteralCheck 
+    .quad IsEndReached
+    .quad LoopWhileNot
 
-    #       AreWeDone %r8, %r9, NextWord, AllDone 
-    #   AllDone:        
 WordEnd ExecuteSession
 
 Word InitScan

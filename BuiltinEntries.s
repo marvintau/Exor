@@ -8,11 +8,23 @@
 # implement the branching block as a new function, and 
 # return to caller after finishing executing the subroutine.
 
-Code Branch
+Code Cond 
     PopDataStack %rax
-
     leaq (%r13, %rax, 8), %r13
-CodeEnd Branch
+CodeEnd Cond 
+
+Code LoopWhileNot
+    # Consumes an element on Data Stack
+    PopDataStack %rax
+CheckRax2:
+    cmp $(0x0), %rax
+    je SkipLoop    
+
+    PopStack %r13
+    subq $(0x8), %r13
+    ExecuteNextWord
+SkipLoop:
+CodeEnd LoopWhileNot
 
 # EXIT WORD
 # ===================

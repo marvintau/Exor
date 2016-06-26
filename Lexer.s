@@ -6,7 +6,7 @@
 # a space is found, with StartReg pointing to initial,
 # and EndReg to first space after last char. 
 
-.macro LocateNextWord StartReg, EndReg 
+.macro LocateWordBound StartReg, EndReg 
 
     leaq InputBuffer(%rip), %rax 
 
@@ -48,7 +48,6 @@
 .macro AreWeDone StartReg, EndReg, LoopLabel, DoneLabel
 
     leaq InputBuffer(%rip), \EndReg
-CheckEndCondition:
     cmpq \StartReg, \EndReg
     je   \DoneLabel
     
@@ -60,7 +59,6 @@ CheckEndCondition:
 
     xorq  %rax, %rax
     xorq  %rbx, %rbx
-
     xorq  %rcx, %rcx
 
     ParseDecimalForEachDigit:
@@ -84,7 +82,6 @@ CheckRax:
 
     xorq  %rax, %rax
     xorq  %rbx, %rbx
-
     xorq  %rcx, %rcx
 
     ParseHexForEachDigit:
@@ -114,7 +111,7 @@ CheckRax:
 .macro ExecuteAllWords StartReg, EndReg
 
     NextWord:
-        LocateNextWord \StartReg, \EndReg
+        LocateWordBound \StartReg, \EndReg
         subq \StartReg, \EndReg
         
         MatchNumber \StartReg, \EndReg
