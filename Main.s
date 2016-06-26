@@ -34,9 +34,5 @@ _main:
     jmp ExecuteSystemWord
     
     SystemExitLabel:
-
-    #ScanInputBuffer	
-    #ExecuteAllWords %r8, %r9 
-    
     movq $SyscallExit, %rax
     syscall

@@ -79,7 +79,7 @@ Word ExecuteSession
 WordEnd ExecuteSession
 
 Word InitScan
+    .quad ScanInputBuffer
     .quad InitLocateWord
-#    .quad ScanInputBuffer
     .quad ExecuteSession
 WordEnd InitScan
