@@ -34,24 +34,28 @@ CodeEnd LocateWordBound
 
 Code MatchNumber
     MatchNumber %r8, %r9
-    cmpb $1, %ah
+    PushDataStack %rax
+Number:
 CodeEnd MatchNumber
 
-Code LiteralCheck
-    jg RecognizedAsWord
-        je RecognizedAsHex
-            ParseDecimal %r8, %r9 
-            jmp FirstMatchDone
+Code ParseDecimal
+    ParseDecimal %r8, %r9 
+CodeEnd ParseDecimal
 
-        RecognizedAsHex:
-            ParseHex %r8, %r9
-            jmp FirstMatchDone
+Code ParseHex
+    ParseHex %r8, %r9
+CodeEnd ParseHex
 
-    RecognizedAsWord:
-        call Find 
-    
-    FirstMatchDone:
-CodeEnd LiteralCheck
+Code ParseWord
+    call Find
+CodeEnd ParseWord
+
+Word LiteralCheck
+    .quad Cond
+    .quad ParseDecimal
+    .quad ParseHex 
+    .quad ParseWord
+WordEnd LiteralCheck
 
 Code IsEndReached
     leaq InputBuffer(%rip), %r9 
@@ -81,7 +85,8 @@ Word ExecuteSession
 WordEnd ExecuteSession
 
 Word InitScan
-    .quad ScanInputBuffer
+#    .quad ScanInputBuffer
     .quad InitLocateWord
     .quad ExecuteSession
+#    .quad LoopLikeForever
 WordEnd InitScan

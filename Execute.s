@@ -2,9 +2,38 @@
 # EXECUTE
 # ====================
 # This part mainly manipulates the entering and exiting
-# words that consist of either executable code or other
-# words. This could be the most interesting and tricky
+# of words that include either executable code or other
+# words.  This could be the most interesting and tricky
 # part in the whole project. Have fun in reading!
+
+# The problem here is that, there are two kinds of word
+# which one kind stores executable code, while the other
+# stores a series of address that points to other words,
+# which is not able to execute. Before jumping into the
+# referred word, we are not able to distinguish whether
+# a word consists of code or other word address.
+
+# The Indirect Addressing is an elegant solution to this
+# issue. This avoids us to write complex handler and the
+# code header. Indirect addressing essentially leads the
+# instruction pointer to a place, where the address is
+# stored somewhere, that referred by another address that
+# stored in the register. (Ponder this!)
+
+# Therefore, the word that contains executable code, has
+# a quad holds the actual starting point of executable
+# code, yet the word referring to other words, also has
+# a quad holds a common subroutine, that push the referer
+# onto stack, take the current word as new referer, and
+# go into the following referred words.
+
+# Without indirect addressing, we will have to implement
+# the code that jump back to referer word in every word, 
+# and it will be hard to separate the word address away
+# from assembly code. Indirect addressing just need one
+# more quad to store the starting address of actual code
+# in word containing code, and one more quad for word
+# containing other words to jump into the referred word.
 
 
 # EXECUTE NEXT WORD

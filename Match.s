@@ -30,7 +30,7 @@
         cmpb $0x66, %al
         jg NotHex
 
-        movb $1, %ah
+        movq $1, %rax
         jmp IsDigit
 
         NotHex:
@@ -42,7 +42,7 @@
             jmp IsDigit
 
         NotEvenDigit:
-            movb $2, %ah
+            movq $2, %rax
             jmp MatchNumberDone 
 
         IsDigit:

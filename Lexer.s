@@ -1,10 +1,14 @@
 .include "Match.s"
 
-# Lexer uses r8 and r9 register
-
-# Always terminates when a bigram of char followed with
-# a space is found, with StartReg pointing to initial,
-# and EndReg to first space after last char. 
+# LOCATE WORD BOUND
+# =====================================================
+# A register holds the address of last char decrease every
+# time and checks two consecutive chars (a bigram) at that
+# position. If a bigram wit "C_" pattern is found, then
+# assign the address to EndReg, and if a bigram with "_C"
+# found, then leave the subroutine, and the current char
+# position (StartReg) along with the end position (EndReg)
+# will be used in the next stage.
 
 .macro LocateWordBound StartReg, EndReg 
 
@@ -19,7 +23,6 @@
         jne  StartWithChar
 
         StartWithSpace:
-            xorq \EndReg, \EndReg
             cmpb $(0x20), -1(\StartReg)
             je  MoveCurr 
 
@@ -43,16 +46,6 @@
 
     WordLocated:
 
-.endm
-
-.macro AreWeDone StartReg, EndReg, LoopLabel, DoneLabel
-
-    leaq InputBuffer(%rip), \EndReg
-    cmpq \StartReg, \EndReg
-    je   \DoneLabel
-    
-    decq \StartReg
-    jmp  \LoopLabel
 .endm
 
 .macro ParseDecimal StartReg, LenReg
@@ -107,5 +100,3 @@ CheckRax:
     PushDataStack %rax
 
 .endm
-
-
