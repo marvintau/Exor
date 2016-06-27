@@ -1,3 +1,5 @@
+.include "Lexer.s"
+
 # Initialize LocateWord
 # =====================
 # r8 always stores the starting of Input buffer, yet

@@ -22,9 +22,13 @@ CheckRax2:
 
     PopStack %r13
     subq $(0x8), %r13
-    ExecuteNextWord
 SkipLoop:
 CodeEnd LoopWhileNot
+
+Code LoopLikeForever
+    PopStack %r13
+    subq $(0x8), %r13
+CodeEnd LoopLikeForever
 
 # EXIT WORD
 # ===================
@@ -32,12 +36,6 @@ CodeEnd LoopWhileNot
 Code Exit
     PopStack %r13
 CodeEnd Exit
-
-Code LoopExit
-    PopStack %r13
-Beef:
-    subq $(0x8), %r13
-CodeEnd LoopExit
 
 # QUIT WORD
 # ===================

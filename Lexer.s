@@ -108,33 +108,4 @@ CheckRax:
 
 .endm
 
-.macro ExecuteAllWords StartReg, EndReg
-
-    NextWord:
-        LocateWordBound \StartReg, \EndReg
-        subq \StartReg, \EndReg
-        
-        MatchNumber \StartReg, \EndReg
-        cmpb $1, %ah
-
-    NumberCheck:
-        jg RecognizedAsWord
-            je RecognizedAsHex
-                ParseDecimal \StartReg, \EndReg 
-                jmp FirstMatchDone
-
-            RecognizedAsHex:
-                ParseHex \StartReg, \EndReg
-                jmp FirstMatchDone
-
-        RecognizedAsWord:
-            call Find 
-        
-        FirstMatchDone:
-
-        AreWeDone \StartReg, \EndReg, NextWord, AllDone 
-    AllDone:        
-        
-.endm
-
 

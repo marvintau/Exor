@@ -9,12 +9,11 @@
 
 .text
 .include "IO.s"
-.include "Lexer.s"
 .include "Stack.s"
-.include "FindEntry.s"
 .include "Execute.s"
 
 .include "Dictionary.s"
+.include "FindEntry.s"
 
 .globl _main
 
