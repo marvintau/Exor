@@ -31,7 +31,6 @@
 
 .macro FindEntry EntryReg
 
-    GoToFirstEntry \EntryReg   
  
     ForEachEntry:
         
@@ -65,3 +64,16 @@
     LookUpDone:
     
 .endm
+
+Word ParseWord
+    .quad EnterDict
+    .quad Find
+WordEnd ParseWord
+
+Code Find
+    FindEntry %r11
+CodeEnd Find 
+
+Code EnterDict
+    GoToFirstEntry %r11   
+CodeEnd EnterDict

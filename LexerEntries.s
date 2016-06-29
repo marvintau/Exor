@@ -47,10 +47,6 @@ Code ParseHex
     ParseHex %r8, %r9
 CodeEnd ParseHex
 
-Code ParseWord
-    FindEntry %r11
-CodeEnd ParseWord
-
 Word LiteralCheck
     .quad Cond
     .quad ParseDecimal
