@@ -41,7 +41,6 @@
  
             jne NotMatching
 
-        OtherwiseMatching:
            
             push \EntryReg 
 
@@ -65,14 +64,61 @@
     
 .endm
 
+Code CheckEnd
+    xorq %rax, %rax
+    cmpq $(0x0), (%r11)
+    sete %al
+    shlq %rax
+    PushDataStack %rax
+CodeEnd CheckEnd
+
+Code EvaluateEntry
+
+    push %r11 
+    GoToDefinition %r11 
+    
+    jmp ExecuteLexedWord 
+    EvaluateDone:
+        PopStack %r13
+    pop %r11 
+
+CodeEnd EvaluateEntry
+
+Code ReturnLexer 
+    .quad RealReturnLexer
+RealReturnLexer:
+    jmp EvaluateDone 
+CodeEnd ReturnLexer
+
+Code MatchName
+    xorq %rax, %rax
+    MatchExactName %r11
+    setne %al
+    PushDataStack %rax
+CodeEnd MatchName
+
+Code NextEntry
+    GoToNextEntry %r11
+CodeEnd NextEntry
+
 Word ParseWord
     .quad EnterDict
     .quad Find
 WordEnd ParseWord
 
-Code Find
-    FindEntry %r11
-CodeEnd Find 
+Word Find
+    .quad CheckEnd
+    .quad Cond
+    .quad MatchAndEval
+    .quad LoopLikeForever
+WordEnd Find
+
+Word MatchAndEval
+    .quad MatchName
+    .quad Cond
+    .quad EvaluateEntry
+    .quad NextEntry
+WordEnd MatchAndEval
 
 Code EnterDict
     GoToFirstEntry %r11   

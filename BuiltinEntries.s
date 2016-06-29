@@ -40,12 +40,6 @@ CodeEnd Exit
 # QUIT WORD
 # ===================
 # Brutally quit the current evaluation session
-Code ReturnLexer 
-    .quad RealReturnLexer
-RealReturnLexer:
-    jmp ExecutionDone
-CodeEnd ReturnLexer
-
 Code SystemExit 
     .quad RealSystemExit 
 RealSystemExit:
