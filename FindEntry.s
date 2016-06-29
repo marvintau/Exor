@@ -29,41 +29,6 @@
     leaq 8(\EntryReg), \EntryReg
 .endm
 
-.macro FindEntry EntryReg
-
- 
-    ForEachEntry:
-        
-        cmpq $(0x0), (\EntryReg)
-        je LookUpDone
-
-        MatchExactName \EntryReg       
- 
-            jne NotMatching
-
-           
-            push \EntryReg 
-
-                GoToDefinition \EntryReg
-
-                jmp ExecuteLexedWord 
-
-                ExecutionDone:
-                    # since we pushed the r13 onto stack
-                    # when entering ExecuteLexedWord
-                    PopStack %r13
-
-            pop  \EntryReg
-            jmp LookUpDone
-        
-        NotMatching:
-            GoToNextEntry \EntryReg
-
-        jmp ForEachEntry
-    LookUpDone:
-    
-.endm
-
 Code CheckEnd
     xorq %rax, %rax
     cmpq $(0x0), (%r11)
