@@ -65,9 +65,3 @@
     LookUpDone:
     
 .endm
-
-Find:
-    FindEntry %r11
-    ret
-
-

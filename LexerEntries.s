@@ -1,4 +1,5 @@
 .include "Lexer.s"
+.include "FindEntry.s"
 
 # Initialize LocateWord
 # =====================
@@ -47,7 +48,7 @@ Code ParseHex
 CodeEnd ParseHex
 
 Code ParseWord
-    call Find
+    FindEntry %r11
 CodeEnd ParseWord
 
 Word LiteralCheck

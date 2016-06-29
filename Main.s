@@ -13,7 +13,6 @@
 .include "Execute.s"
 
 .include "Dictionary.s"
-.include "FindEntry.s"
 
 .globl _main
 
