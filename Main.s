@@ -3,9 +3,13 @@
  *  =======================
  *  Containing learning notes and resources
  */
-.data
-.include "DataSegment.s"
 
+# TEXT segment
+# ==================================================================
+# TEXT segment will be assembled as a read-only part of a binary
+# executable. Notably not all bytes loaded into memory are permitted
+# to be read as instructions. Without being specified, the bytes in
+# DATA segment are not permitted to be executed.
 
 .text
 .include "IO.s"
@@ -16,16 +20,22 @@
 
 .globl _main
 
-# In order to save the number of argument and reduce the complexity
-# of the macros, we are going to make some registers for special
-# purpose, and not going to specify as arguments.
-
-
 _main:
     InitDataStack
     InitStack
 
 #MainLoop:
+
+# Now we are going into the part which is hardest to understand in
+# this set of code. Prepare yourself with a cup of coffee, and stay
+# focus!
+
+# Both InitScan and ExecuteSystemWord are defined somewhere in
+# Dictionary.s. You may want to look up there. And it's always
+# good to open a terminal, and locate the file containing the word
+# with grep <YourWord> -r *
+
+# Now I suppose you have entered Dictionary.s
 
     # Enter the main routine
     leaq InitScan(%rip), %r11 
@@ -34,3 +44,9 @@ _main:
     SystemExitLabel:
     movq $SyscallExit, %rax
     syscall
+
+.data
+.include "DataSegment.s"
+
+.bss
+Memory:

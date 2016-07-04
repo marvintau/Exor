@@ -10,7 +10,7 @@
 # position (StartReg) along with the end position (EndReg)
 # will be used in the next stage.
 
-.macro LocateWordBound StartReg, EndReg 
+.macro LocateWordBound StartReg, EndReg
 
     leaq InputBuffer(%rip), %rax 
 
@@ -45,21 +45,27 @@
         jmp NextBigram 
 
     WordLocated:
+        subq \StartReg, \EndReg
+
+    
 
 .endm
+
+.macro ParseString
+.endm 
 
 .macro ParseDecimal StartReg, LenReg
 
     xorq  %rax, %rax
-    xorq  %rbx, %rbx
+    xorq  \StartReg, \StartReg
     xorq  %rcx, %rcx
 
     ParseDecimalForEachDigit:
         imul $10, %rax
         
-        movzbq (\StartReg, %rcx), %rbx
-        subq $0x30, %rbx
-        addq %rbx, %rax 
+        movzbq (\StartReg, %rcx), \StartReg
+        subq $0x30, \StartReg
+        addq \StartReg, %rax 
         
         incq %rcx
         cmpq %rcx, \LenReg
@@ -74,23 +80,23 @@ CheckRax:
 .macro ParseHex StartReg, LenReg
 
     xorq  %rax, %rax
-    xorq  %rbx, %rbx
+    xorq  \StartReg, \StartReg
     xorq  %rcx, %rcx
 
     ParseHexForEachDigit:
         imul $0x10, %rax
         
-        movzbq (\StartReg, %rcx), %rbx
+        movzbq (\StartReg, %rcx), \StartReg
         cmpb $0x60,  %bl
         jg Hex
-            subq $0x30, %rbx
+            subq $0x30, \StartReg
             jmp ParseHexCheckDone
         Hex:
-            subq $0x57, %rbx
+            subq $0x57, \StartReg
 
         ParseHexCheckDone:
         
-        addq %rbx, %rax 
+        addq \StartReg, %rax 
         
         incq %rcx
         cmpq %rcx, \LenReg
@@ -100,3 +106,5 @@ CheckRax:
     PushDataStack %rax
 
 .endm
+
+

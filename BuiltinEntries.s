@@ -13,8 +13,14 @@ Code Cond
     leaq (%r13, %rax, 8), %r13
 CodeEnd Cond 
 
+# CONDITIONAL & UNCONDITIONAL LOOP
+# =============
+# Takes rax as the number of iteration. rax will be decrease
+# time after time, and loop exits if rax reaches 0. The loop
+# forever doesn't take any number, it's just like jump back
+# to the beginning of the current word.
+
 Code LoopWhileNot
-    # Consumes an element on Data Stack
     PopDataStack %rax
 CheckRax2:
     cmp $(0x0), %rax
@@ -45,3 +51,5 @@ Code SystemExit
 RealSystemExit:
     jmp SystemExitLabel 
 CodeEnd SystemExit
+
+

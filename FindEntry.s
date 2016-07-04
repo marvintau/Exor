@@ -3,21 +3,14 @@
 # =========================
 # also execlusively used by FindEntry
 
-.macro GoToFirstEntry EntryReg
-    leaq DictStart(%rip), \EntryReg
-    GoToNextEntry \EntryReg
-.endm
-
-.macro GoToNextEntry EntryReg
-
-    movq -8(\EntryReg), \EntryReg
-    GoToEntry \EntryReg
-    
-.endm
-
 .macro GoToEntry EntryReg
     leaq DictEnd(%rip), %r10
     leaq (%r10, \EntryReg), \EntryReg
+.endm
+
+.macro GoToNextEntry EntryReg
+    movq -8(\EntryReg), \EntryReg
+    GoToEntry \EntryReg
 .endm
 
 # Let EntryReg stores the address of definition.
@@ -62,12 +55,17 @@ Code MatchName
     PushDataStack %rax
 CodeEnd MatchName
 
+Code EnterEntry
+    leaq DictStart(%rip), %r11 
+    GoToNextEntry %r11
+CodeEnd EnterEntry
+
 Code NextEntry
     GoToNextEntry %r11
 CodeEnd NextEntry
 
 Word ParseWord
-    .quad EnterDict
+    .quad EnterEntry
     .quad Find
 WordEnd ParseWord
 
@@ -85,6 +83,4 @@ Word MatchAndEval
     .quad NextEntry
 WordEnd MatchAndEval
 
-Code EnterDict
-    GoToFirstEntry %r11   
-CodeEnd EnterDict
+

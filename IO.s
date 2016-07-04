@@ -22,6 +22,13 @@
 	popq	%rax
 .endm
 
+# Print String Constant
+# =====================
+# Uses system call.
+PrintConstString:
+    Print %r15, -8(%r15)
+    ret
+
 .macro PrintReg Reg
 	pushq	%rax
 	pushq	%rcx

@@ -18,19 +18,14 @@ Code ScanInputBuffer
     movq    $(InputBufferEnd - InputBuffer), %rdx
     syscall
 
-    # replace the final enter (carriage return)
-    # as a white space, for falling edge check
-    # when parsing
     decq    %rax
     movq    $(0x20), (%rsi, %rax)
 
-    # Store buffer length
     movq    %rax, InputBufferLength(%rip)
 CodeEnd ScanInputBuffer
 
 Code LocateWordBound
-    LocateWordBound %r8, %r9
-    subq %r8, %r9
+    LocateWordBound %r8, %r9 
 CodeEnd LocateWordBound
 
 Code MatchNumber

@@ -1,4 +1,12 @@
 
+
+# ENTRY STRUCTURE
+# ========================================================================
+# EntryStructure.s contains a lot of macros. A macro definition contains a
+# name, and arguments, and a piece of code. The name that refer to macro
+# definition will be replaced by the corresponding code during assembling.
+# Consequently, macro definition won't be appearing in the final binary.
+
 # STRING MACRO
 # ======================
 # Char array with length
