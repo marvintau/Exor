@@ -1,5 +1,5 @@
 .set SyscallExit,		0x2000001
-.set SyscallDisplay,	0x2000004
+.set SyscallDisplay,	        0x2000004
 .set SyscallRead,		0x2000003
 
 .macro Print address, length

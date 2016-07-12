@@ -4,6 +4,28 @@
  *  Containing learning notes and resources
  */
 
+# For enabling self-modifiable code 
+# =================================
+.equiv BSD_MASK,    0x2000000
+.equiv SYS_MPROTECT, 74 | BSD_MASK        /* MPROTECT syscall */
+ 
+# These constants for mprotect(2) are from <sys/mman.h>
+.equiv PROT_READ,  0x01         /* pages can be read */
+.equiv PROT_WRITE, 0x02         /* pages can be written */
+.equiv PROT_EXEC,  0x04         /* pages can be executed */
+ 
+.equiv PROT_ALL, PROT_READ | PROT_WRITE | PROT_EXEC
+.equiv PAGE_SIZE, 4096
+
+.macro mprotect addr, len, prot
+        leaq \addr, %rdi
+        movq \len,  %rsi
+        movq \prot, %rdx
+ 
+        movq $SYS_MPROTECT, %rax
+        syscall
+.endm
+
 # TEXT segment
 # ==================================================================
 # TEXT segment will be assembled as a read-only part of a binary
@@ -16,11 +38,13 @@
 .include "Stack.s"
 .include "Execute.s"
 
-.include "Dictionary.s"
 
 .globl _main
 
 _main:
+
+    mprotect ExecutableSegment(%rip), $PAGE_SIZE, $PROT_ALL 
+CheckReturn:
     InitDataStack
     InitStack
 
@@ -46,7 +70,7 @@ _main:
     syscall
 
 .data
+ExecutableSegment:
 .include "DataSegment.s"
+.include "Dictionary.s"
 
-.bss
-Memory:
