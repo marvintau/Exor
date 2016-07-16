@@ -13,7 +13,7 @@ CodeEnd InitLocateWord
 
 Code ScanInputBuffer
     movq    $SyscallRead, %rax
-    movl    $(1), %edi
+    movq    $(0), %rdi
     leaq    InputBuffer(%rip), %rsi
     movq    $(InputBufferEnd - InputBuffer), %rdx
     syscall
@@ -77,7 +77,7 @@ Word ExecuteSession
 WordEnd ExecuteSession
 
 Word InitScan
-#    .quad ScanInputBuffer
+    .quad ScanInputBuffer
     .quad InitLocateWord
     .quad ExecuteSession
 #    .quad LoopLikeForever
