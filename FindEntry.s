@@ -97,12 +97,7 @@ Word MatchAndEval
     .quad NextEntry
 WordEnd MatchAndEval
 
-
 Code PrintEntryName
-    PrintStringInitial %r11
-CodeEnd PrintEntryName
-
-Code PrintNewline
     jmp PrintCode
 NewlineString:
     .asciz "\n"
@@ -115,6 +110,13 @@ PrintCode:
 	movq	$SyscallDisplay, %rax
 	movq	$1, %rdi
         movq    $1, %rbx
+	leaq	8(%r11), %rsi
+	movq	(%r11), %rdx
+	syscall
+	
+	movq	$SyscallDisplay, %rax
+	movq	$1, %rdi
+        movq    $1, %rbx
 	leaq	NewlineString(%rip), %rsi
 	movq	$1, %rdx
 	syscall
@@ -123,11 +125,10 @@ PrintCode:
 	popq	%rdx
 	popq	%rsi
 	popq	%rdi
-CodeEnd PrintNewline
+CodeEnd PrintEntryName
 
 Word PrintAndMove
     .quad PrintEntryName
-    .quad PrintNewline
     .quad NextEntry
 WordEnd PrintAndMove
 
