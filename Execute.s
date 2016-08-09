@@ -55,11 +55,13 @@
 # the code. If the entry is a word that contains other
 # words, then this should be EnterWord.
 
-.macro ExecuteNextWord
+ExecuteNextWord:
     movq  (%r13), %r12
     leaq 8(%r13), %r13 
     jmpq *(%r12)
 
+.macro ExecuteNextWord
+    jmp ExecuteNextWord
 .endm
 
 # ENTERWORD

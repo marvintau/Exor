@@ -17,6 +17,7 @@
         SkippedContent\name:
             push %r15
             leaq Content\name(%rip), %r15
+            leaq -8(%r15), %r15
             call PrintConstString
             pop  %r15       
 

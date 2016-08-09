@@ -20,4 +20,5 @@ DictEnd:
     .include "BuiltinEntries.s"
     .include "StringDisplay.s"
     .include "LexerEntries.s"
+    .include "EntryDefine.s"
 DictStart:

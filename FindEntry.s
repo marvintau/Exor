@@ -30,6 +30,16 @@ Code CheckEnd
     PushDataStack %rax
 CodeEnd CheckEnd
 
+
+# EvaluateEntry will be playing the role as exec,
+# eval or similar functions in most of the main-
+# stream dynamic interpreting language. Evaluate-
+# Entry should returns to the calling point after
+# evaluate the new entry. Since EvaluateEntry will
+# break the normal traversing of evaluation tree,
+# A dedicated stack should be created for this
+# code word. 
+
 Code EvaluateEntry
 
     push %r11 
@@ -41,6 +51,10 @@ Code EvaluateEntry
     pop %r11 
 
 CodeEnd EvaluateEntry
+
+# ReturnLexer will be automatically pushed into
+# the return stack of the word being evaluated,
+# coerced to return to the evaluating point.
 
 Code ReturnLexer 
     .quad RealReturnLexer
@@ -83,4 +97,49 @@ Word MatchAndEval
     .quad NextEntry
 WordEnd MatchAndEval
 
+
+Code PrintEntryName
+    PrintStringInitial %r11
+CodeEnd PrintEntryName
+
+Code PrintNewline
+    jmp PrintCode
+NewlineString:
+    .asciz "\n"
+PrintCode:
+	pushq   %rdi
+	pushq	%rsi
+	pushq	%rdx
+        pushq   %r11
+
+	movq	$SyscallDisplay, %rax
+	movq	$1, %rdi
+        movq    $1, %rbx
+	leaq	NewlineString(%rip), %rsi
+	movq	$1, %rdx
+	syscall
+	
+        popq    %r11
+	popq	%rdx
+	popq	%rsi
+	popq	%rdi
+CodeEnd PrintNewline
+
+Word PrintAndMove
+    .quad PrintEntryName
+    .quad PrintNewline
+    .quad NextEntry
+WordEnd PrintAndMove
+
+Word PrintEntryNameIteration
+    .quad CheckEnd
+    .quad Cond
+    .quad PrintAndMove
+    .quad LoopLikeForever
+WordEnd PrintEntryNameIteration
+
+Word PrintEntryNames
+    .quad EnterEntry
+    .quad PrintEntryNameIteration
+WordEnd PrintEntryNames
 
