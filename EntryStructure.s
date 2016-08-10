@@ -21,12 +21,15 @@
 
 # ENTRY HEADER
 # ====================
-# Contains merely a string indicating the name.
+# Contains merely a string indicating the name. The quad after the string
+# indicates the distance between the actual entry entering point and the
+# header of the entry.
 
 .macro EntryHeader name
 
     Header\name:
         String Entry\name, "\name"
+        .quad (\name - Header\name)
     \name:
 
 .endm

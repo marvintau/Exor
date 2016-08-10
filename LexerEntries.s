@@ -77,7 +77,7 @@ Word ExecuteSession
 WordEnd ExecuteSession
 
 Word InitScan
-    .quad PrintEntryNames 
+#    .quad PrintEntryNames 
 #    .quad ScanInputBuffer
     .quad InitLocateWord
     .quad ExecuteSession

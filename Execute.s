@@ -55,9 +55,59 @@
 # the code. If the entry is a word that contains other
 # words, then this should be EnterWord.
 
+
+BacktracingPrint:
+
+    jmp BacktracingPrintStart
+
+Arrow:
+    .ascii " ==> "
+
+BacktracingPrintStart:
+
+    pushq   %rax
+    pushq   %rbx
+    pushq   %rcx
+    pushq   %rdi
+    pushq   %rsi
+    pushq   %rdx
+    pushq   %r11
+
+    movq    (%r12), %rax              # %r12 is the address of the first byte of entry body
+    subq    %rax, -8(%rax)          # give this to rax, and then goes to the start of entry
+                                    # header.
+    movq    (%rax), %rdx            # Length to %rdx
+    leaq    8(%rax), %rsi           # address to %rsi
+
+    movq    $SyscallDisplay, %rax
+    movq    $(1), %rdi
+    movq    $(1), %rbx
+    syscall
+    
+    movq   $SyscallDisplay, %rax
+    movq   $(1), %rdi
+    movq   $(1), %rbx
+    leaq   Arrow(%rip), %rsi
+    movq   $(5), %rdx
+    syscall
+
+BacktracingPrintContinue:
+ 
+    popq    %r11
+    popq    %rdx
+    popq    %rsi
+    popq    %rdi
+    popq    %rcx
+    popq    %rbx
+    popq    %rax
+    ret
+
 ExecuteNextWord:
     movq  (%r13), %r12
-    leaq 8(%r13), %r13 
+    call BacktracingPrint
+    leaq 8(%r13), %r13
+
+ 
     jmpq *(%r12)
 
 .macro ExecuteNextWord
