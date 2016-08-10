@@ -69,8 +69,9 @@ CheckReturn:
     movq $SyscallExit, %rax
     syscall
 
+.include "Dictionary.s"
+
 .data
 ExecutableSegment:
 .include "DataSegment.s"
-.include "Dictionary.s"
 

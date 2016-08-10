@@ -21,8 +21,6 @@
             call PrintConstString
             pop  %r15       
 
-            ExecuteNextWord %r12
-     
     CodeEnd \name
 
 .endm
