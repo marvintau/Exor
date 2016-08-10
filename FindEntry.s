@@ -57,8 +57,6 @@ CodeEnd EvaluateEntry
 # coerced to return to the evaluating point.
 
 Code ReturnLexer 
-    .quad RealReturnLexer
-RealReturnLexer:
     jmp EvaluateDone 
 CodeEnd ReturnLexer
 

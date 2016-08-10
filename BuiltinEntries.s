@@ -47,8 +47,6 @@ CodeEnd Exit
 # ===================
 # Brutally quit the current evaluation session
 Code SystemExit 
-    .quad RealSystemExit 
-RealSystemExit:
     jmp SystemExitLabel 
 CodeEnd SystemExit
 
