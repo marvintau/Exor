@@ -73,11 +73,17 @@ BacktracingPrintStart:
     pushq   %rdx
     pushq   %r11
 
-    movq    (%r12), %rax              # %r12 is the address of the first byte of entry body
-    subq    %rax, -8(%rax)          # give this to rax, and then goes to the start of entry
-                                    # header.
-    movq    (%rax), %rdx            # Length to %rdx
-    leaq    8(%rax), %rsi           # address to %rsi
+    # %r12 currently points to the address where actual
+    # code or the code of enterword begins. The following
+    # two steps makes %rax points to the entry header.
+    movq    %r12, %rax              
+    subq    -8(%rax), %rax          
+
+    #cmp     $(0), %rax
+    #je      BacktracingPrintContinue
+                                    
+    movq    (%rax), %rdx           
+    leaq    8(%rax), %rsi
 
     movq    $SyscallDisplay, %rax
     movq    $(1), %rdi
