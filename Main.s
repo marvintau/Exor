@@ -38,7 +38,6 @@
 .include "Stack.s"
 .include "Execute.s"
 
-
 .globl _main
 
 _main:
@@ -69,9 +68,9 @@ CheckReturn:
     movq $SyscallExit, %rax
     syscall
 
-.include "Dictionary.s"
 
 .data
 ExecutableSegment:
+.include "Dictionary.s"
 .include "DataSegment.s"
 
