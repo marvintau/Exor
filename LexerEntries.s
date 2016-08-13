@@ -1,5 +1,4 @@
 .include "Lexer.s"
-.include "FindEntry.s"
 
 # Initialize LocateWord
 # =====================
@@ -31,7 +30,6 @@ CodeEnd LocateWordBound
 Code MatchNumber
     MatchNumber %r8, %r9
     PushDataStack %rax
-Number:
 CodeEnd MatchNumber
 
 Code ParseDecimal

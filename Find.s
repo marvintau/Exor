@@ -31,35 +31,6 @@ Code CheckEnd
 CodeEnd CheckEnd
 
 
-# EvaluateEntry will be playing the role as exec,
-# eval or similar functions in most of the main-
-# stream dynamic interpreting language. Evaluate-
-# Entry should returns to the calling point after
-# evaluate the new entry. Since EvaluateEntry will
-# break the normal traversing of evaluation tree,
-# A dedicated stack should be created for this
-# code word. 
-
-Code EvaluateEntry
-
-    push %r11 
-    GoToDefinition %r11 
-    
-    jmp ExecuteLexedWord 
-    EvaluateDone:
-        PopStack %r13
-    pop %r11 
-
-CodeEnd EvaluateEntry
-
-# ReturnLexer will be automatically pushed into
-# the return stack of the word being evaluated,
-# coerced to return to the evaluating point.
-
-Code ReturnLexer 
-    jmp EvaluateDone 
-CodeEnd ReturnLexer
-
 Code MatchName
     xorq %rax, %rax
     MatchExactName %r11
@@ -91,7 +62,7 @@ WordEnd Find
 Word MatchAndEval
     .quad MatchName
     .quad Cond
-    .quad EvaluateEntry
+    .quad Eval
     .quad NextEntry
 WordEnd MatchAndEval
 
@@ -103,23 +74,23 @@ PrintCode:
 	pushq   %rdi
 	pushq	%rsi
 	pushq	%rdx
-        pushq   %r11
+    pushq   %r11
 
 	movq	$SyscallDisplay, %rax
 	movq	$1, %rdi
-        movq    $1, %rbx
+    movq    $1, %rbx
 	leaq	8(%r11), %rsi
 	movq	(%r11), %rdx
 	syscall
 	
 	movq	$SyscallDisplay, %rax
 	movq	$1, %rdi
-        movq    $1, %rbx
+    movq    $1, %rbx
 	leaq	NewlineString(%rip), %rsi
 	movq	$1, %rdx
 	syscall
 	
-        popq    %r11
+    popq    %r11
 	popq	%rdx
 	popq	%rsi
 	popq	%rdi

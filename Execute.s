@@ -141,17 +141,6 @@ EnterWord:
 # the address of exiting routine in the RAR, instead of pushing
 # another address into it.
 
-ReturnAddress:
-    .quad ReturnLexer
-
-ExecuteLexedWord:
-
-    PushStack %r13
-    leaq ReturnAddress(%rip), %r13
-
-    movq %r11, %r12
-    jmp *(%r12)
-
 ExitAddress:
     .quad SystemExit
 

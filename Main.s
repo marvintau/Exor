@@ -71,6 +71,6 @@ CheckReturn:
 
 .data
 ExecutableSegment:
-.include "Dictionary.s"
+.include "Dict.s"
 .include "DataSegment.s"
 
