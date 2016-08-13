@@ -68,7 +68,7 @@ Code MatchName
 CodeEnd MatchName
 
 Code EnterEntry
-    leaq DictStart(%rip), %r11 
+    movq DictionaryStartAddress(%rip), %r11 
     GoToNextEntry %r11
 CodeEnd EnterEntry
 
