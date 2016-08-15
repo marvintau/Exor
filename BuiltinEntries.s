@@ -20,7 +20,7 @@ CodeEnd Cond
 # forever doesn't take any number, it's just like jump back
 # to the beginning of the current word.
 
-Code LoopWhileNot
+Code LoopUntil
     PopDataStack %rax
 CheckRax2:
     cmp $(0x0), %rax
@@ -29,7 +29,7 @@ CheckRax2:
     PopStack %r13
     subq $(0x8), %r13
 SkipLoop:
-CodeEnd LoopWhileNot
+CodeEnd LoopUntil
 
 Code LoopUncond
     PopStack %r13

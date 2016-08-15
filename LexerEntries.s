@@ -70,7 +70,7 @@ Word ExecuteSession
     .quad MatchNumber
     .quad LiteralCheck 
     .quad IsEndReached
-    .quad LoopWhileNot
+    .quad LoopUntil
 
 WordEnd ExecuteSession
 
