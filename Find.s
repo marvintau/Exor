@@ -56,7 +56,7 @@ Word Find
     .quad CheckEnd
     .quad Cond
     .quad MatchAndEval
-    .quad LoopLikeForever
+    .quad LoopUncond
 WordEnd Find
 
 Word MatchAndEval
@@ -71,29 +71,29 @@ Code PrintEntryName
 NewlineString:
     .asciz "\n"
 PrintCode:
-	pushq   %rdi
-	pushq	%rsi
-	pushq	%rdx
+    pushq   %rdi
+    pushq   %rsi
+    pushq   %rdx
     pushq   %r11
 
-	movq	$SyscallDisplay, %rax
-	movq	$1, %rdi
+    movq    $SyscallDisplay, %rax
+    movq    $1, %rdi
     movq    $1, %rbx
-	leaq	8(%r11), %rsi
-	movq	(%r11), %rdx
-	syscall
+    leaq    8(%r11), %rsi
+    movq    (%r11), %rdx
+    syscall
 	
-	movq	$SyscallDisplay, %rax
-	movq	$1, %rdi
+    movq    $SyscallDisplay, %rax
+    movq    $1, %rdi
     movq    $1, %rbx
-	leaq	NewlineString(%rip), %rsi
-	movq	$1, %rdx
-	syscall
+    leaq    NewlineString(%rip), %rsi
+    movq    $1, %rdx
+    syscall
 	
     popq    %r11
-	popq	%rdx
-	popq	%rsi
-	popq	%rdi
+    popq    %rdx
+    popq    %rsi
+    popq    %rdi
 CodeEnd PrintEntryName
 
 Word PrintAndMove
@@ -105,7 +105,7 @@ Word PrintEntryNameIteration
     .quad CheckEnd
     .quad Cond
     .quad PrintAndMove
-    .quad LoopLikeForever
+    .quad LoopUncond
 WordEnd PrintEntryNameIteration
 
 Word PrintEntryNames

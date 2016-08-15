@@ -31,10 +31,10 @@ CheckRax2:
 SkipLoop:
 CodeEnd LoopWhileNot
 
-Code LoopLikeForever
+Code LoopUncond
     PopStack %r13
     subq $(0x8), %r13
-CodeEnd LoopLikeForever
+CodeEnd LoopUncond
 
 # EXIT WORD
 # ===================
