@@ -73,15 +73,16 @@ BacktracingPrintStart:
     pushq   %rdx
     pushq   %r11
 
+    movq    EvaluationLevel(%rip), %rax
+    cmpq     $(0), %rax
+    je      BacktracingPrintContinue
+
     # %r12 currently points to the address where actual
     # code or the code of enterword begins. The following
     # two steps makes %rax points to the entry header.
     movq    %r12, %rax              
     subq    -8(%rax), %rax          
-
-    #cmp     $(0), %rax
-    #je      BacktracingPrintContinue
-                                    
+                                   
     movq    (%rax), %rdx           
     leaq    8(%rax), %rsi
 

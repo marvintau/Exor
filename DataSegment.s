@@ -1,3 +1,6 @@
+EvaluationLevel:
+    .quad 0
+
 
 # The starting address of dictionary will be altered
 # when new entries are added. Thus the FindEntry routine
@@ -21,9 +24,6 @@ InputBuffer:
     .ascii    "Maria Jesus"
     .fill     64, 1, 0x20 
 InputBufferEnd:
-
-QuitRoutineHolder:
-    .quad    0
 
 Stack:
     .rept    16   
