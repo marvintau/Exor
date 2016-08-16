@@ -19,7 +19,7 @@ DictEnd:
     .quad 0x000000000000
     .include "BuiltinEntries.s"
     .include "StringDisplay.s"
-    .include "LexerEntries.s"
+    .include "Lexer.s"
     .include "Find.s"
     .include "Eval.s"
 DictStart:

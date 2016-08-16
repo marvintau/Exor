@@ -31,12 +31,48 @@ Code CheckEnd
 CodeEnd CheckEnd
 
 
+.macro MatchExactName EntryReg
+
+.endm
+
+
+# ==============================================
+# MATCH INPUT NAME WITH DICTIONARY
+# ==============================================
+# Compare the user input stored in buffer, located
+# by %r8 the address and %r9 the length, against
+# the entry name from %r11
+
 Code MatchName
+    
     xorq %rax, %rax
-    MatchExactName %r11
-    setne %al
-    PushDataStack %rax
+    
+    # ------------------------------------------
+    # COMPARE LENGTH
+    
+    movq %r9, %rcx
+    cmpq (%r11), %rcx
+    jne MatchExactNameDone 
+
+    # ------------------------------------------
+    # COMPARE EACH CHARACTER
+    
+    ForEachCharacter:		
+        movb  -1(%r8, %rcx), %al
+        cmpb  7(%r11, %rcx), %al
+        jne MatchExactNameDone 
+    loop ForEachCharacter
+
+    # ------------------------------------------
+    # STORE COMPARISON RESULT
+
+    MatchExactNameDone:
+        setne %al
+        PushDataStack %rax
+
 CodeEnd MatchName
+
+
 
 Code EnterEntry
     movq DictionaryStartAddress(%rip), %r11 

@@ -75,7 +75,7 @@ BacktracingPrintStart:
 
     movq    EvaluationLevel(%rip), %rax
     cmpq     $(0), %rax
-    je      BacktracingPrintContinue
+    jg      BacktracingPrintContinue
 
     # %r12 currently points to the address where actual
     # code or the code of enterword begins. The following

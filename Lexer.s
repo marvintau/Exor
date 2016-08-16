@@ -1,5 +1,3 @@
-.include "Match.s"
-
 # LOCATE WORD BOUND
 # =====================================================
 # A register holds the address of last char decrease every
@@ -46,65 +44,64 @@
 
     WordLocated:
         subq \StartReg, \EndReg
+.endm
 
+
+
+# Initialize 
+# =====================
+# r8 always stores the starting of Input buffer, yet
+# r9 always stores the length of the buffer.
+
+Code InitLocateWord
+    movq BufferAddressRegister(%rip), %r8
+    addq InputBufferLength(%rip), %r8
+CodeEnd InitLocateWord
+
+Code ScanInputBuffer
+    movq    $SyscallRead, %rax
+    movq    $(0), %rdi
+    movq    BufferAddressRegister(%rip), %rsi
+    movq    $(InputBufferEnd - InputBuffer), %rdx
+    syscall
+
+    decq    %rax
+    movq    $(0x20), (%rsi, %rax)
+
+    movq    %rax, InputBufferLength(%rip)
+CodeEnd ScanInputBuffer
+
+Code LocateWordBound
+    LocateWordBound %r8, %r9 
+CodeEnd LocateWordBound
+
+Code IsEndReached
+    leaq InputBuffer(%rip), %r9 
+    cmpq %r8, %r9
+    je Reached
+        decq %r8
+        movq $(0x1), %rax
+        jmp ReachedDone
+    Reached:    
+        movq $(0x0), %rax
+    ReachedDone:
+        PushDataStack %rax
+CodeEnd IsEndReached
+
+Word ExecuteSession
+    # %r8 as Buffer Start Register, which holds the starting position
+    # where lexer starts (which actually is the end of buffer). While
+    # %r9 the Buffer End register, which sometimes holds the position
+    # where the word starts, sometimes holds the length of the word
     
+    .quad LocateWordBound
+    .quad ParseWord
+    .quad IsEndReached
+    .quad LoopUntil
 
-.endm
+WordEnd ExecuteSession
 
-.macro ParseString
-.endm 
-
-.macro ParseDecimal StartReg, LenReg
-
-    xorq  %rax, %rax
-    xorq  \StartReg, \StartReg
-    xorq  %rcx, %rcx
-
-    ParseDecimalForEachDigit:
-        imul $10, %rax
-        
-        movzbq (\StartReg, %rcx), \StartReg
-        subq $0x30, \StartReg
-        addq \StartReg, %rax 
-        
-        incq %rcx
-        cmpq %rcx, \LenReg
-
-        jne ParseDecimalForEachDigit
-CheckRax:
-
-    PushDataStack %rax
-
-.endm
-
-.macro ParseHex StartReg, LenReg
-
-    xorq  %rax, %rax
-    xorq  \StartReg, \StartReg
-    xorq  %rcx, %rcx
-
-    ParseHexForEachDigit:
-        imul $0x10, %rax
-        
-        movzbq (\StartReg, %rcx), \StartReg
-        cmpb $0x60,  %bl
-        jg Hex
-            subq $0x30, \StartReg
-            jmp ParseHexCheckDone
-        Hex:
-            subq $0x57, \StartReg
-
-        ParseHexCheckDone:
-        
-        addq \StartReg, %rax 
-        
-        incq %rcx
-        cmpq %rcx, \LenReg
-
-        jne ParseHexForEachDigit
-
-    PushDataStack %rax
-
-.endm
-
-
+Word InitScan
+    .quad InitLocateWord
+    .quad ExecuteSession
+WordEnd InitScan
