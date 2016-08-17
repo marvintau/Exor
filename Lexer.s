@@ -75,7 +75,7 @@ Code LocateWordBound
     LocateWordBound %r8, %r9 
 CodeEnd LocateWordBound
 
-Code IsEndReached
+Code BufferEndNotReached
     leaq InputBuffer(%rip), %r9 
     cmpq %r8, %r9
     je Reached
@@ -86,7 +86,7 @@ Code IsEndReached
         movq $(0x0), %rax
     ReachedDone:
         PushDataStack %rax
-CodeEnd IsEndReached
+CodeEnd BufferEndNotReached 
 
 Word ExecuteSession
     # %r8 as Buffer Start Register, which holds the starting position
@@ -96,8 +96,8 @@ Word ExecuteSession
     
     .quad LocateWordBound
     .quad ParseWord
-    .quad IsEndReached
-    .quad LoopUntil
+    .quad BufferEndNotReached 
+    .quad LoopWhile
 
 WordEnd ExecuteSession
 

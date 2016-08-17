@@ -22,19 +22,12 @@
     leaq 16(\EntryReg), \EntryReg
 .endm
 
-Code CheckEnd
+Code EndNotReached
     xorq %rax, %rax
     cmpq $(0x0), (%r11)
-    sete %al
-    shlq %rax
+    setne %al
     PushDataStack %rax
-CodeEnd CheckEnd
-
-
-.macro MatchExactName EntryReg
-
-.endm
-
+CodeEnd EndNotReached
 
 # ==============================================
 # MATCH INPUT NAME WITH DICTIONARY
@@ -89,18 +82,13 @@ Word ParseWord
 WordEnd ParseWord
 
 Word Find
-    .quad CheckEnd
-    .quad Cond
-    .quad MatchAndEval
-    .quad LoopUncond
-WordEnd Find
-
-Word MatchAndEval
     .quad MatchName
     .quad Cond
     .quad Eval
     .quad NextEntry
-WordEnd MatchAndEval
+    .quad EndNotReached 
+    .quad LoopWhile
+WordEnd Find
 
 Code PrintEntryName
     jmp PrintCode
@@ -138,10 +126,9 @@ Word PrintAndMove
 WordEnd PrintAndMove
 
 Word PrintEntryNameIteration
-    .quad CheckEnd
-    .quad Cond
     .quad PrintAndMove
-    .quad LoopUncond
+    .quad EndNotReached
+    .quad LoopWhile
 WordEnd PrintEntryNameIteration
 
 Word PrintEntryNames

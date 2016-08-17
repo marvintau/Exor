@@ -75,7 +75,7 @@ BacktracingPrintStart:
 
     movq    EvaluationLevel(%rip), %rax
     cmpq     $(0), %rax
-    jg      BacktracingPrintContinue
+    je      BacktracingPrintContinue
 
     # %r12 currently points to the address where actual
     # code or the code of enterword begins. The following
@@ -90,7 +90,7 @@ BacktracingPrintStart:
     movq    $(1), %rdi
     movq    $(1), %rbx
     syscall
-    
+
     movq   $SyscallDisplay, %rax
     movq   $(1), %rdi
     movq   $(1), %rbx
@@ -98,6 +98,7 @@ BacktracingPrintStart:
     movq   $(5), %rdx
     syscall
 
+    
 BacktracingPrintContinue:
  
     popq    %r11
