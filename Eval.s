@@ -39,6 +39,11 @@ Code EvalCore
         decq EvaluationLevel(%rip)
         PopStack %r13
 
+    # 4 for the offset between the cond after Eval
+    # and AddLiteral
+    movq $(4), %rax
+    PushDataStack %rax
+
 CodeEnd EvalCore
 
 # ReturnLexer will be automatically pushed into
@@ -50,25 +55,3 @@ Code ReturnLexer
 ReturnAddress:
     .quad ReturnLexer
 CodeEnd ReturnLexer
-
-# Before adding new entry to memory, we suppose that
-# we have get the new word bound. Thus AddEntryHeader
-# should be called in another word with LocateWordBound
-# called right before.
-
-# Note that after the LocateWordBound being called, the
-# register EndReg (%r9) remains same, yet StartReg (%r8)
-# stores the length of the string.
-
-Code AddEntryHeader    
-    push %rax
-    push %rcx
-    
-        
-
-    pop  %rcx
-    pop  %rax
-CodeEnd AddEntryHeader
-
-Code AddEntryEnd
-CodeEnd AddEntryEnd

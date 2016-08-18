@@ -97,6 +97,7 @@ Word ExecuteSession
     .quad LocateWordBound
     .quad ParseWord
     .quad BufferEndNotReached 
+    .quad PrintEntryNames
     .quad LoopWhile
 
 WordEnd ExecuteSession

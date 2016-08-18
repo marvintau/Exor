@@ -61,6 +61,10 @@ Code MatchName
 
     MatchExactNameDone:
         setne %al
+
+        # 3 for the offset between Cond after MatchName
+        # and NextEntry
+        imulq $(2), %rax
         PushDataStack %rax
 
 CodeEnd MatchName
@@ -85,9 +89,11 @@ Word Find
     .quad MatchName
     .quad Cond
     .quad Eval
+    .quad Cond 
     .quad NextEntry
     .quad EndNotReached 
     .quad LoopWhile
+    .quad AddLiteral
 WordEnd Find
 
 Code PrintEntryName

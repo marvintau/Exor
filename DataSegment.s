@@ -21,7 +21,7 @@ InputBufferLength:
     .quad   30 
     .byte   0x20
 InputBuffer:
-    .ascii    "Maria Jesus"
+    .ascii    "Andrew Andrew Maria Jesus"
     .fill     64, 1, 0x20 
 InputBufferEnd:
 
