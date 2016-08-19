@@ -4,6 +4,8 @@
  *  Containing learning notes and resources
  */
 
+.equiv STR_LENG_FIELD_LEN, 8
+
 # For enabling self-modifiable code 
 # =================================
 .equiv BSD_MASK,    0x2000000

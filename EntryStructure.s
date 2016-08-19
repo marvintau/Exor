@@ -79,34 +79,3 @@
     EntryEnd \name 
 .endm
 
-# CONDITIONAL BRANCHING WORD
-# =======================
-# Forth has its own version of branching, the conditional branching word
-# is merely for the convenience of writing built-in words. We employ the
-# EnterSpecificWord subroutine, which is handy for implementing if-then
-# and switch-case mechanism.
-
-# And of course, you have to write .Exit right after each word you want
-# to execute, just the break in each case of a switch-case block.
-
-# And by the way, the ConditionalWord uses same end as ordinary word.
-
-.macro ConditionalWord name
-    EntryHeader \name
-        .quad EnterSpecificWord
-.endm
-
-
-# LOOPING WORD
-# ======================
-# Even though Conditional Branching provide us a great freedom of executing
-# words, it's still forward executing. LoopEnd enables to jump back to the
-# starting of current word. But currently the problem is there is no way to
-# escape the loop yet.
-
-.macro LoopEnd name
-    .quad LoopExit
-    EntryEnd \name
-.endm
-
-
