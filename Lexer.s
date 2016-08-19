@@ -10,15 +10,44 @@
 
 .macro LocateWordBound StartReg, EndReg
 
+    push %rdx
+    xorq %rdx, %rdx
+
     leaq InputBuffer(%rip), %rax 
 
     NextBigram:
         cmpq \StartReg, %rax 
         je   WordLocated
 
+        # First to handle the quoted string, if is a quote
+        # then check if it's an open or closed quote. If
+        # it's not a quote but currently within an opening
+        # quote, Just move to next bigram.
+        cmpb $(0x22), (\StartReg)
+        je   Quoted
+        cmpq $(0x1), %rdx
+        je   MoveCurr
+
+        # If it's not the issue of quoted string, separate
+        # the words with space.
         cmpb $(0x20), (\StartReg)
         je   StartWithSpace
         jne  StartWithChar
+
+        Quoted:
+            cmpq $(0x1), %rdx
+            jne OpenQuote
+            je  CloseQuote
+
+            OpenQuote:
+                movq $(0x1), %rdx
+                movq \StartReg, \EndReg
+                jmp MoveCurr
+
+            CloseQuote:
+                xorq %rdx, %rdx
+                inc \StartReg
+                jmp WordLocated
 
         StartWithSpace:
             cmpb $(0x20), -1(\StartReg)
@@ -44,6 +73,8 @@
 
     WordLocated:
         subq \StartReg, \EndReg
+
+    pop %rdx
 .endm
 
 
