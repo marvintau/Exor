@@ -30,7 +30,7 @@
 
         # If it's not the issue of quoted string, separate
         # the words with space.
-        cmpb $(0x20), (\StartReg)
+        cmpb $' ', (\StartReg)
         je   StartWithSpace
         jne  StartWithChar
 
@@ -50,7 +50,7 @@
                 jmp WordLocated
 
         StartWithSpace:
-            cmpb $(0x20), -1(\StartReg)
+            cmpb $' ', -1(\StartReg)
             je  MoveCurr 
 
             CharNext:

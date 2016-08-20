@@ -23,4 +23,5 @@ DictEnd:
     .include "Eval.s"
     .include "Define.s"
     .include "StringDisplay.s"
+    .include "Parse.s"
 DictStart:
