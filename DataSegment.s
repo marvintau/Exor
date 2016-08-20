@@ -18,10 +18,10 @@ BufferAddressRegister:
     .quad   InputBuffer
 
 InputBufferLength:
-    .quad   30 
+    .quad   40 
     .byte   0x20
 InputBuffer:
-    .ascii    "TestInt UnsignedDec 1337 Maria Jesus"
+    .ascii    "TestInt UnsignedHex 13C37 Maria Jesus"
     .fill     64, 1, 0x20 
 InputBufferEnd:
 
