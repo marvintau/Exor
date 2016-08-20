@@ -1,9 +1,4 @@
 Code Int
-    push    %rax
-    push    %rbx        # preserve working registers
-    push    %rdx
-    push    %rsi
-    push    %rcx
 
     # Supposing the number literal is just added into the dictionary
     movq DictionaryStartAddress(%rip), %rsi
@@ -45,16 +40,10 @@ Code Int
     IntDone:
         PushDataStack %rax
 
-        pop %rcx
-        pop  %rsi            # recover saved registers
-        pop  %rdx
-        pop  %rbx
-        pop  %rax
 CodeEnd Int
 
 Code TestInt
     push %rax
         PopDataStack %rax
-        movq $(0), 0
     pop %rax
 CodeEnd TestInt
