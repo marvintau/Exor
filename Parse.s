@@ -1,5 +1,4 @@
-Code Int
-
+.macro InitRegisters
     # Supposing the number literal is just added into the dictionary
     movq DictionaryStartAddress(%rip), %rsi
     GoToNextEntry %rsi
@@ -9,7 +8,12 @@ Code Int
 
     # rax will be storing the final result.
     xor %rax, %rax        
-    
+.endm
+
+ Code ParseUnsignedDec
+
+    InitRegisters   
+
     IntNextChar:
         # Read in character, move forward along the string
         xorq %rbx, %rbx
@@ -40,7 +44,12 @@ Code Int
     IntDone:
         PushDataStack %rax
 
-CodeEnd Int
+CodeEnd ParseUnsignedDec
+
+Word UnsignedDec
+    .quad ParseUnsignedDec
+    .quad RemoveLastEntry
+WordEnd UnsignedDec
 
 Code TestInt
     push %rax
