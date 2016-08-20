@@ -81,15 +81,54 @@ Code AddEntryHeader
     pop %r8
 CodeEnd AddEntryHeader
 
-# VALIDATION:
-# This function should be put in word Find, and executed when no existing
-# word is found, then perform PrintEntryNames before exiting.
+# DEFINE LITERAL
+# ==============
+# Defines an empty entry, while the entry name field can be used to
+# store arbitrary ASCII information. All of parsed and unknown (not
+# in the dictionary) string from input buffer will be stored as
+# literal.
 
-Word AddLiteral
+Word DefineLiteral
     .quad AddEntryHeader
     .quad AddEntryEnd
-WordEnd AddLiteral
+WordEnd DefineLiteral
 
+# ADD WORD
+# ==============
+# Add a new word address to the current entry. It reads the current
+# Dictionary Start Address, and the offset from Dictionary Start
+# Address, to the last written address, write the new word address
+# at this address, and save the current offset for future use.
+Code AddWord
+    push %rax
+    push %rbx
+    push %rdx
+
+    movq DictionaryStartAddress(%rip), %rdx
+    PopDataStack %rax
+    movq %r11, (%rdx, %rax)
+    addq $(0x8), %rax
+    PushDataStack %rax
+
+    pop  %rdx
+    pop  %rbx
+    pop  %rax
+CodeEnd AddWord 
+
+Code ClearBuffer
+    movq $(0x20), %rax
+    movq $(0x40), %rcx
+    movq InputBuffer(%rip), %rsi
+    rep stosq
+CodeEnd ClearBuffer
+
+# COMPILE
+# ==============-
+# Compile tries to translate the word sequence in the buffer into
+# a series of entry address, 
+Word Compile
+    
+WordEnd Compile
 
 Code RemoveLastEntry
     push %rax
@@ -98,3 +137,6 @@ Code RemoveLastEntry
     movq %rax, DictionaryStartAddress(%rip)    
     pop %rax
 CodeEnd RemoveLastEntry
+
+
+

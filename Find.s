@@ -93,7 +93,7 @@ Word Find
     .quad NextEntry
     .quad EndNotReached 
     .quad LoopWhile
-    .quad AddLiteral
+    .quad DefineLiteral
 WordEnd Find
 
 Code PrintEntryName

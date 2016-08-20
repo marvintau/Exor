@@ -21,7 +21,7 @@ InputBufferLength:
     .quad   40 
     .byte   0x20
 InputBuffer:
-    .ascii    "TestInt UnsignedHex 13C37 Maria Jesus"
+    .ascii    "TestInt UnsignedHex 13c37 Maria Jesus"
     .fill     64, 1, 0x20 
 InputBufferEnd:
 
