@@ -60,6 +60,7 @@ Code AddEntryHeader
     NextChar:
         movb -1(%r8, %rcx), %al
         movb %al, 7(%rbx, %rcx)
+    movq $(0), 0
         loop NextChar    
 
 
@@ -87,6 +88,10 @@ CodeEnd AddEntryHeader
 # store arbitrary ASCII information. All of parsed and unknown (not
 # in the dictionary) string from input buffer will be stored as
 # literal.
+
+Code IfBufferEndReached
+    
+CodeEnd IfBufferEndReached
 
 Word DefineLiteral
     .quad AddEntryHeader
@@ -125,9 +130,12 @@ CodeEnd ClearBuffer
 # COMPILE
 # ==============-
 # Compile tries to translate the word sequence in the buffer into
-# a series of entry address, 
+# a series of entry address. It would clear the buffer and start
+# a new session. In the new session, all user input will be lexed
+# and recognized as words with AddWord, and a new word will be
+# formed.
 Word Compile
-    
+#    .quad ClearBuffer    
 WordEnd Compile
 
 Code RemoveLastEntry
