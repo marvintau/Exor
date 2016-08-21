@@ -1,6 +1,6 @@
+# For Debug purpose
 EvaluationLevel:
     .quad 0
-
 
 # The starting address of dictionary will be altered
 # when new entries are added. Thus the FindEntry routine
@@ -17,11 +17,19 @@ DictionaryStartAddress:
 BufferAddressRegister:
     .quad   InputBuffer
 
+# WordBounding will operate this.
+WordStartOffset:
+    .quad   0
+WordLength:
+    .quad   0
+WordCount:
+    .quad   0
+
 InputBufferLength:
     .quad   40 
     .byte   0x20
 InputBuffer:
-    .ascii    "Jesus"
+    .ascii    "Compile"
     .fill     64, 1, 0x20 
 InputBufferEnd:
 

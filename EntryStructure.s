@@ -13,7 +13,7 @@
 
 .macro String name, content
 	Length\name:
-		.quad(End\name - \name)
+		.quad (End\name - \name)
 	\name:
 		.ascii "\content"
 	End\name:

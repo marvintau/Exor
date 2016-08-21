@@ -60,7 +60,6 @@ Code AddEntryHeader
     NextChar:
         movb -1(%r8, %rcx), %al
         movb %al, 7(%rbx, %rcx)
-    movq $(0), 0
         loop NextChar    
 
 
@@ -90,10 +89,16 @@ CodeEnd AddEntryHeader
 # literal.
 
 Code IfBufferEndReached
-    
+    xorq %rax, %rax
+    cmp $(0), %r9
+    sete %al
+    shl $(1), %al
+    PushDataStack %rax
 CodeEnd IfBufferEndReached
 
 Word DefineLiteral
+    .quad IfBufferEndReached
+    .quad Cond
     .quad AddEntryHeader
     .quad AddEntryEnd
 WordEnd DefineLiteral
@@ -122,9 +127,9 @@ CodeEnd AddWord
 
 Code ClearBuffer
     movq $(0x20), %rax
-    movq $(0x40), %rcx
-    movq InputBuffer(%rip), %rsi
-    rep stosq
+    movq $(0x1), %rcx
+    leaq InputBuffer(%rip), %rdi
+    rep stosw
 CodeEnd ClearBuffer
 
 # COMPILE
@@ -135,7 +140,8 @@ CodeEnd ClearBuffer
 # and recognized as words with AddWord, and a new word will be
 # formed.
 Word Compile
-#    .quad ClearBuffer    
+    .quad ClearBuffer    
+    
 WordEnd Compile
 
 Code RemoveLastEntry
