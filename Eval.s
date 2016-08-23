@@ -8,25 +8,16 @@
 # code word. 
 
 Word Eval
-    .quad PushEntryReg
     .quad EvalCore
-    .quad PopEntryReg
 WordEnd Eval
-
-Code PushEntryReg
-    push %r11
-    GoToDefinition %r11 
-CodeEnd PushEntryReg
-
-Code PopEntryReg
-    pop %r11
-CodeEnd PopEntryReg
 
 # The real eval routine extracted from evalEntry.
 # %r11 will be the destination entry.
 Code EvalCore
 
     movq %r11, %r12
+    GoToDefinition %r12
+
     PushStack %r13
 
     incq EvaluationLevel(%rip)
@@ -42,7 +33,7 @@ Code EvalCore
     # 4 for the offset between the cond after Eval
     # and AddLiteral
     movq $(4), %rax
-    PushDataStack %rax
+    push %rax
 
 CodeEnd EvalCore
 

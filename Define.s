@@ -2,13 +2,10 @@
 # AddEntryEnd is exclusively used by creating new Entry.
 
 Code AddEntryEnd 
-    push %rax
-    push %rbx
-    push %rcx
 
     # The word before ExpandDictionaryLength should push the
     # length of expansion onto the stack.
-    PopDataStack %rax
+    pop %rax
 
     movq DictionaryStartAddress(%rip), %rbx
     leaq DictEnd(%rip), %rcx
@@ -33,10 +30,6 @@ Code AddEntryEnd
     # memory.
     movq %rcx, DictionaryStartAddress(%rip)
 
-
-    pop  %rcx
-    pop  %rbx
-    pop  %rax
 CodeEnd AddEntryEnd 
 
 # AddEntryHeader is supposed to be handling the user input, thus
@@ -45,11 +38,6 @@ CodeEnd AddEntryEnd
 # length of the slice.
 
 Code AddEntryHeader
-    push %r8
-    push %r9
-    push %rax
-    push %rbx
-    push %rcx
 
     # put the string length first
     movq DictionaryStartAddress(%rip), %rbx
@@ -72,13 +60,8 @@ Code AddEntryHeader
     movq %rcx, (%rbx, %rcx)
     addq $(8), %rcx   
 
-    PushDataStack %rcx
+    push %rcx
 
-    pop %rcx
-    pop %rbx
-    pop %rax
-    pop %r9
-    pop %r8
 CodeEnd AddEntryHeader
 
 # DEFINE LITERAL
@@ -93,7 +76,7 @@ Code IfBufferEndReached
     cmp $(0), %r9
     sete %al
     shl $(1), %al
-    PushDataStack %rax
+    push %rax
 CodeEnd IfBufferEndReached
 
 Word DefineLiteral
@@ -110,19 +93,14 @@ WordEnd DefineLiteral
 # Address, to the last written address, write the new word address
 # at this address, and save the current offset for future use.
 Code AddWord
-    push %rax
-    push %rbx
-    push %rdx
 
     movq DictionaryStartAddress(%rip), %rdx
-    PopDataStack %rax
+    pop %rax
     movq %r11, (%rdx, %rax)
     addq $(0x8), %rax
-    PushDataStack %rax
 
-    pop  %rdx
-    pop  %rbx
-    pop  %rax
+    push %rax
+
 CodeEnd AddWord 
 
 Code ClearBuffer
@@ -132,24 +110,56 @@ Code ClearBuffer
     rep stosw
 CodeEnd ClearBuffer
 
-# COMPILE
+# DEFINE
 # ==============-
-# Compile tries to translate the word sequence in the buffer into
+# Define tries to translate the word sequence in the buffer into
 # a series of entry address. It would clear the buffer and start
 # a new session. In the new session, all user input will be lexed
 # and recognized as words with AddWord, and a new word will be
 # formed.
+Word Define
+    .quad ClearBuffer
+    .quad ScanInputBuffer
+    .quad EnterEntry
+    .quad Rewind
+    .quad Compile
+WordEnd Define
+
+Code Rewind
+    movq DictionaryStartAddress(%rip), %rax
+    GoToNextEntry %rax
+    movq %rax, DictionaryStartAddress(%rip)
+    GoToDefinition %rax
+    push %rax
+CodeEnd Rewind
+
 Word Compile
-    .quad ClearBuffer    
-    
+    .quad LocateWordBound
+    .quad CompileFind
+    .quad BufferEndNotReached 
+    .quad PrintEntryNames
+    .quad LoopWhile
 WordEnd Compile
 
+Word CompileFind
+    .quad MatchName
+    .quad Cond
+    .quad StoreAddress 
+    .quad Cond 
+    .quad NextEntry
+    .quad EndNotReached 
+    .quad LoopWhile
+    .quad DefineLiteral
+ WordEnd CompileFind
+
+Code StoreAddress
+    
+CodeEnd StoreAddress
+
 Code RemoveLastEntry
-    push %rax
     movq DictionaryStartAddress(%rip), %rax
     GoToNextEntry %rax
     movq %rax, DictionaryStartAddress(%rip)    
-    pop %rax
 CodeEnd RemoveLastEntry
 
 

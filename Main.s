@@ -46,7 +46,6 @@ _main:
 
     mprotect ExecutableSegment(%rip), $PAGE_SIZE, $PROT_ALL 
 CheckReturn:
-    InitDataStack
     InitStack
 
 #MainLoop:

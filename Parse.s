@@ -21,7 +21,7 @@
         movq $(0xdeafbeef), %rax
 
     Done\Type:
-        PushDataStack %rax
+        push %rax
 .endm
 
 Code ParseUnsignedDec
@@ -106,8 +106,6 @@ Word UnsignedHex
 WordEnd UnsignedHex
 
 Code TestInt
-    push %rax
-        PopDataStack %rax
+        pop %rax
         movq $(0), 0
-    pop %rax
 CodeEnd TestInt

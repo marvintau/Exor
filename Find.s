@@ -26,7 +26,7 @@ Code EndNotReached
     xorq %rax, %rax
     cmpq $(0x0), (%r11)
     setne %al
-    PushDataStack %rax
+    push %rax
 CodeEnd EndNotReached
 
 # ==============================================
@@ -65,7 +65,7 @@ Code MatchName
         # 3 for the offset between Cond after MatchName
         # and NextEntry
         imulq $(2), %rax
-        PushDataStack %rax
+        push %rax
 
 CodeEnd MatchName
 

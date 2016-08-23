@@ -26,17 +26,3 @@
     leaq -8(%r15), %r15
     movq (%r15), \Reg
 .endm
-
-.macro InitDataStack
-    leaq DataStack(%rip), %r14
-.endm
-
-.macro PushDataStack DataReg
-    movq \DataReg, (%r14)
-    leaq 8(%r14), %r14
-.endm
-
-.macro PopDataStack Reg
-    leaq -8(%r14), %r14
-    movq (%r14), \Reg
-.endm

@@ -9,7 +9,7 @@
 # return to caller after finishing executing the subroutine.
 
 Code Cond 
-    PopDataStack %rax
+    pop %rax
     leaq (%r13, %rax, 8), %r13
 CodeEnd Cond 
 
@@ -21,7 +21,7 @@ CodeEnd Cond
 # to the beginning of the current word.
 
 Code LoopWhile
-    PopDataStack %rax
+    pop %rax
 CheckRax2:
     cmp $(0x0), %rax
     je SkipLoop    

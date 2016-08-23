@@ -112,7 +112,7 @@ Code BufferEndNotReached
     Reached:    
         movq $(0x0), %rax
     ReachedDone:
-        PushDataStack %rax
+        push %rax
 CodeEnd BufferEndNotReached 
 
 Word ExecuteSession
