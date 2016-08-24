@@ -71,7 +71,12 @@ CodeEnd AddEntryHeader
 # in the dictionary) string from input buffer will be stored as
 # literal.
 
+# Also, the entry entrance address should be consumed here
+
 Code IfBufferEndReached
+
+    pop %r11
+
     xorq %rax, %rax
     cmp $(0), %r9
     sete %al
@@ -125,12 +130,27 @@ Word Define
     .quad Compile
 WordEnd Define
 
+# REWIND
+# ==============
+# goes back to the starting position of newly added entry, and 
+# rewrite with referred word addresses, and finally add the entry
+# end. Since the Entry end needs the entry length and address,
+# we have to preserve the entry address until the entry end is
+# calculated.
+
+# Since we prohibit using registers without popping from stack,
+# we have to save how many words we have written right after the
+# word address we added. The code word that writes new address
+# will read the numbers first, save it to a spare register, and
+# overwrite the quadword with new address, and then append the
+# number after the newly added addres by increasing 1. Thus it
+# should be initiated with 0, by overwritting current EntryEnd.
+
 Code Rewind
     movq DictionaryStartAddress(%rip), %rax
     GoToNextEntry %rax
-    movq %rax, DictionaryStartAddress(%rip)
     GoToDefinition %rax
-    push %rax
+    movq $(0), -8(%rax)
 CodeEnd Rewind
 
 Word Compile
@@ -149,11 +169,19 @@ Word CompileFind
     .quad NextEntry
     .quad EndNotReached 
     .quad LoopWhile
-    .quad DefineLiteral
  WordEnd CompileFind
 
 Code StoreAddress
     
+    movq DictionaryStartAddress(%rip), %rax
+    GoToDefinition %rax
+    movq -8(%rax), %rbx
+    leaq (%rax, %rbx), %rbx
+
+    # Now %rbx is the address to be written with new word
+
+    
+
 CodeEnd StoreAddress
 
 Code RemoveLastEntry

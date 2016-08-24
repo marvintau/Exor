@@ -15,6 +15,9 @@ WordEnd Eval
 # %r11 will be the destination entry.
 Code EvalCore
 
+    # receive entry entrance address from MatchName
+    pop  %r11
+
     movq %r11, %r12
     GoToDefinition %r12
 
@@ -30,10 +33,14 @@ Code EvalCore
         decq EvaluationLevel(%rip)
         PopStack %r13
 
-    # 4 for the offset between the cond after Eval
-    # and AddLiteral
+    # Leave this to DefineLiteral 
+    push %r11
+
+    # 4 for the distance between Cond and DefineLiteral 
     movq $(4), %rax
+    # leave this to Cond
     push %rax
+
 
 CodeEnd EvalCore
 
@@ -41,8 +48,8 @@ CodeEnd EvalCore
 # the return stack of the word being evaluated,
 # coerced to return to the evaluating point.
 
-Code ReturnLexer 
+Code Return 
     jmp EvaluateDone 
 ReturnAddress:
-    .quad ReturnLexer
-CodeEnd ReturnLexer
+    .quad Return
+CodeEnd Return
