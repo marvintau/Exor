@@ -17,7 +17,7 @@
 .equiv PROT_EXEC,  0x04         /* pages can be executed */
  
 .equiv PROT_ALL, PROT_READ | PROT_WRITE | PROT_EXEC
-.equiv PAGE_SIZE, 4096
+.equiv PAGE_SIZE, 8192 
 
 .macro mprotect addr, len, prot
         leaq \addr, %rdi

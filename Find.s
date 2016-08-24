@@ -120,7 +120,6 @@ NewlineString:
 PrintCode:
     popq    %r11
 
-    pushq   %rdi
     pushq   %rsi
     pushq   %rdx
     pushq   %r11
@@ -142,7 +141,6 @@ PrintCode:
     popq    %r11
     popq    %rdx
     popq    %rsi
-    popq    %rdi
 
     pushq %r11
 
