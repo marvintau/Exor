@@ -17,8 +17,8 @@
     leaq Stack(%rip), %r15
 .endm
 
-.macro PushStack DataReg
-    movq \DataReg, (%r15)
+.macro PushStack Reg
+    movq \Reg, (%r15)
     leaq  8(%r15), %r15
 .endm
 
