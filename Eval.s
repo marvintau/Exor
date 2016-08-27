@@ -1,30 +1,25 @@
-# EvaluateEntry will be playing the role as exec,
-# eval or similar functions in most of the main-
-# stream dynamic interpreting language. Evaluate-
-# Entry should returns to the calling point after
-# evaluate the new entry. Since EvaluateEntry will
-# break the normal traversing of evaluation tree,
-# A dedicated stack should be created for this
-# code word. 
+# ======================================================
+# EVAL
+# ======================================================
+# Save the current runtime context and go to the routine
+# defined by user words. No registers are preserved, but
+# guaranteed to lead the instruction pointer back.
 
-Word Eval
-    .quad EvalCore
-WordEnd Eval
+Code Eval
+    
+    # For debugging
+    incq EvaluationLevel(%rip)
 
-# The real eval routine extracted from evalEntry.
-# %r11 will be the destination entry.
-Code EvalCore
-
+    # Save context and prepare to jump to the new
+    # session
     movq %r11, %r12
     GoToDefinition %r12
-
     PushStack %r13
-
-    incq EvaluationLevel(%rip)
-    
     leaq ReturnAddress(%rip), %r13
-
+    
     jmp *(%r12)
+
+    # -------------LEFT CURRENT SESSION-----------------
 
     EvaluateDone:
         decq EvaluationLevel(%rip)
@@ -36,12 +31,14 @@ Code EvalCore
     push %rax
 
 
-CodeEnd EvalCore
+CodeEnd Eval
 
-# ReturnLexer will be automatically pushed into
-# the return stack of the word being evaluated,
-# coerced to return to the evaluating point.
-
+# ======================================================
+# RETURN
+# ======================================================
+# A word that merely referred by Eval, that guide the
+# instruction pointer back to the code starting from
+# EvaluateDone in Eval.
 Code Return 
     jmp EvaluateDone 
 ReturnAddress:
