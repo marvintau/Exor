@@ -9,20 +9,20 @@
 
 
 # For stack operations, only two registers are used in each
-# macro functions. %r15 stores the stack address, while %r14
+# macro functions. %r10 stores the stack address, while %r14
 # are for storing the popped data, which is only appear in
 # pop-related macro functions.
 
 .macro InitStack
-    leaq Stack(%rip), %r15
+    leaq Stack(%rip), %r10
 .endm
 
 .macro PushStack Reg
-    movq \Reg, (%r15)
-    leaq  8(%r15), %r15
+    movq \Reg, (%r10)
+    leaq  8(%r10), %r10
 .endm
 
 .macro PopStack Reg
-    leaq -8(%r15), %r15
-    movq (%r15), \Reg
+    leaq -8(%r10), %r10
+    movq (%r10), \Reg
 .endm
