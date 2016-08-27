@@ -1,27 +1,28 @@
-
 # Dictionary.s
-# ===============================================
-# Dictionary is a special section in the executable, and
-# basically it is a portion that organizes all executable
-# code in Exor. Dictionary contains entries, which is similar
-# to what we call it a function, or subroutine, or procedure.
-# It's a piece of code, which will be executed as sequential
-# instructions, with some additional information.
-
-# You may first open the files such as BuiltinEntries.s or
-# StringDisplay.s to see what an entry looks like, and then
-# come back to EntryStructure.s, to check out what forms an
-# entry.
+# ================================================
+# Dictionary holds all entries. The Macros defined
+# in EntryStructure.s enables creating entries and
+# forms a linked table, which holds code entries,
+# and word entries consisting of other entries.
 
 .include "EntryStructure.s"
 
 DictEnd:
     .quad 0x000000000000
     .include "BuiltinEntries.s"
+
+# ================================================
+# LEXER, FIND & EXECUTE
+# ================================================
+# The foundation of Exor, the basic code and words
+# that create a REPL environment to define and run
+# words.
+
     .include "Lexer.s"
     .include "Find.s"
-    .include "Define.s"
     .include "Execute.s"
+
     .include "StringDisplay.s"
     .include "Parse.s"
+    .include "Define.s"
 DictStart:
