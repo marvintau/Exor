@@ -24,15 +24,10 @@
 
 Code EndNotReached
 
-    # received %r11 from NextEntry
-    pop  %r11
-
     xorq %rax, %rax
     cmpq $(0x0), (%r11)
     setne %al
 
-    # for MatchName in next round
-    push %r11
     # for LoopWhile
     push %rax
 CodeEnd EndNotReached
@@ -46,8 +41,6 @@ CodeEnd EndNotReached
 
 Code MatchName
     
-    pop  %r11
-
     xorq %rax, %rax
     
     # ------------------------------------------
@@ -76,8 +69,6 @@ Code MatchName
         # and NextEntry
         imulq $(2), %rax
 
-        # For Eval or NextEntry
-        push %r11
         # For Cond
         push %rax
 
@@ -88,13 +79,10 @@ CodeEnd MatchName
 Code EnterEntry
     movq DictionaryStartAddress(%rip), %r11 
     GoToNextEntry %r11
-    push %r11
 CodeEnd EnterEntry
 
 Code NextEntry
-    pop %r11
     GoToNextEntry %r11
-    push %r11
 CodeEnd NextEntry
 
 Word ParseWord
@@ -118,7 +106,6 @@ Code PrintEntryName
 NewlineString:
     .asciz "\n"
 PrintCode:
-    popq    %r11
 
     pushq   %rsi
     pushq   %rdx
@@ -142,13 +129,8 @@ PrintCode:
     popq    %rdx
     popq    %rsi
 
-    pushq %r11
 
 CodeEnd PrintEntryName
-
-Code PrintDone
-    popq   %r11
-CodeEnd PrintDone
 
 Word PrintAndMove
     .quad PrintEntryName
@@ -164,6 +146,5 @@ WordEnd PrintEntryNameIteration
 Word PrintEntryNames
     .quad EnterEntry
     .quad PrintEntryNameIteration
-    .quad PrintDone
 WordEnd PrintEntryNames
 

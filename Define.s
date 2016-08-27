@@ -75,8 +75,6 @@ CodeEnd AddEntryHeader
 
 Code IfBufferEndReached
 
-    pop %r11
-
     xorq %rax, %rax
     cmp $(0), %r9
     sete %al

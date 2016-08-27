@@ -15,9 +15,6 @@ WordEnd Eval
 # %r11 will be the destination entry.
 Code EvalCore
 
-    # receive entry entrance address from MatchName
-    pop  %r11
-
     movq %r11, %r12
     GoToDefinition %r12
 
@@ -32,9 +29,6 @@ Code EvalCore
     EvaluateDone:
         decq EvaluationLevel(%rip)
         PopStack %r13
-
-    # Leave this to DefineLiteral 
-    push %r11
 
     # 4 for the distance between Cond and DefineLiteral 
     movq $(4), %rax
