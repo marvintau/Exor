@@ -1,3 +1,6 @@
+# ===================================================================
+# ADD ENTRY END
+# ===================================================================
 
 # AddEntryEnd is exclusively used by creating new Entry.
 
@@ -31,6 +34,10 @@ Code AddEntryEnd
     movq %rcx, DictionaryStartAddress(%rip)
 
 CodeEnd AddEntryEnd 
+
+# ===================================================================
+# ADD ENTRY HEADER
+# ===================================================================
 
 # AddEntryHeader is supposed to be handling the user input, thus
 # it uses the buffer slice registers directly. Remember r8 denotes
@@ -70,8 +77,6 @@ CodeEnd AddEntryHeader
 # store arbitrary ASCII information. All of parsed and unknown (not
 # in the dictionary) string from input buffer will be stored as
 # literal.
-
-# Also, the entry entrance address should be consumed here
 
 Code IfBufferEndReached
 
@@ -160,12 +165,12 @@ Word Compile
 WordEnd Compile
 
 Word CompileFind
-    .quad MatchName
+    .quad MatchName_Branch
     .quad Cond
     .quad StoreAddress 
     .quad Cond 
     .quad NextEntry
-    .quad EndNotReached 
+    .quad EndNotReached_LoopWhile 
     .quad LoopWhile
  WordEnd CompileFind
 

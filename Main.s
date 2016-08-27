@@ -37,31 +37,14 @@
 
 .text
 .include "IO.s"
-.include "Stack.s"
 
 .globl _main
 
 _main:
 
     mprotect ExecutableSegment(%rip), $PAGE_SIZE, $PROT_ALL 
-CheckReturn:
-    InitStack
 
-#MainLoop:
-
-# Now we are going into the part which is hardest to understand in
-# this set of code. Prepare yourself with a cup of coffee, and stay
-# focus!
-
-# Both InitScan and ExecuteSystemWord are defined somewhere in
-# Dictionary.s. You may want to look up there. And it's always
-# good to open a terminal, and locate the file containing the word
-# with grep <YourWord> -r *
-
-# Now I suppose you have entered Dictionary.s
-
-    # Enter the main routine
-    leaq InitScan(%rip), %r11 
+    # Where the new world begins
     jmp ExecuteSystemWord
     
     SystemExitLabel:

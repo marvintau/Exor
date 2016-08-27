@@ -8,9 +8,14 @@
 # implement the branching block as a new function, and 
 # return to caller after finishing executing the subroutine.
 
+.macro BranchStep StepReg
+    leaq (%r13, \StepReg, 8), %r13
+    jmp ExecuteNextWord
+.endm
+
 Code Cond 
     pop %rax
-    leaq (%r13, %rax, 8), %r13
+    BranchStep %rax
 CodeEnd Cond 
 
 # CONDITIONAL & UNCONDITIONAL LOOP
@@ -20,20 +25,24 @@ CodeEnd Cond
 # forever doesn't take any number, it's just like jump back
 # to the beginning of the current word.
 
+.macro ReEnterWord
+    PopStack %r13
+    subq $(0x8), %r13
+    jmp ExecuteNextWord
+.endm
+
 Code LoopWhile
     pop %rax
-CheckRax2:
     cmp $(0x0), %rax
     je SkipLoop    
 
-    PopStack %r13
-    subq $(0x8), %r13
+    ReEnterWord
+
 SkipLoop:
 CodeEnd LoopWhile
 
 Code LoopUncond
-    PopStack %r13
-    subq $(0x8), %r13
+    ReEnterWord
 CodeEnd LoopUncond
 
 # EXIT WORD
@@ -49,4 +58,5 @@ CodeEnd Exit
 Code SystemExit 
     jmp SystemExitLabel 
 CodeEnd SystemExit
+
 

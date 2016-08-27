@@ -9,7 +9,6 @@
 
 DictEnd:
     .quad 0x000000000000
-    .include "BuiltinEntries.s"
 
 # ================================================
 # LEXER, FIND & EXECUTE
@@ -33,12 +32,14 @@ DictEnd:
 #          an address that locates executable code.
 # r13:     Pointer to the address that holds the
 #          NEXT address that to be copied to r12
+# r14:     The counter that used for recording 
+#          how many words have been compiled.
 
+    .include "Execute.s"
+    .include "BuiltinEntries.s"
     .include "Lexer.s"
     .include "Find.s"
-    .include "Execute.s"
     .include "Define.s"
 
     .include "StringDisplay.s"
-    .include "Parse.s"
 DictStart:

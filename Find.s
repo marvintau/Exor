@@ -1,49 +1,21 @@
 
-# ENTRY TRAVERSING ROUTINES
-# =========================
-# also execlusively used by FindEntry
+# =========================================================================
+# MATCH NAME 
+# =========================================================================
+# Compare the user input stored in buffer, located by %r8 the address and
+# %r9 the length, against the entry name from %r11
 
-.macro GoToEntry EntryReg
-    push %r10
-    leaq DictEnd(%rip), %r10
-    leaq (%r10, \EntryReg), \EntryReg
-    pop %r10
-.endm
-
-.macro GoToNextEntry EntryReg
-    movq -8(\EntryReg), \EntryReg
-    GoToEntry \EntryReg
-.endm
-
-# Let EntryReg stores the address of definition.
-# The offset depends on the content between the
-# header label and content label.
-
-.macro GoToDefinition EntryReg
-    addq (\EntryReg), \EntryReg
-    leaq 16(\EntryReg), \EntryReg
-.endm
-
-# ==============================================
-# MATCH INPUT NAME WITH DICTIONARY
-# ==============================================
-# Compare the user input stored in buffer, located
-# by %r8 the address and %r9 the length, against
-# the entry name from %r11
-
-Code MatchName
+Code MatchName_Branch
     
     xorq %rax, %rax
     
-    # ------------------------------------------
-    # COMPARE LENGTH
+    # -------------COMPARE LENGTH----------------
     
     movq %r9, %rcx
     cmpq (%r11), %rcx
     jne MatchExactNameDone 
 
-    # ------------------------------------------
-    # COMPARE EACH CHARACTER
+    # ---------COMPARE EACH CHARACTER------------
     
     ForEachCharacter:		
         movb  -1(%r8, %rcx), %al
@@ -51,50 +23,87 @@ Code MatchName
         jne MatchExactNameDone 
     loop ForEachCharacter
 
-    # ------------------------------------------
-    # STORE COMPARISON RESULT
+    # ---------DECIDE WHETER TO EVAL-------------
 
     MatchExactNameDone:
         setne %al
+        BranchStep %rax
+ 
+CodeEnd MatchName_Branch
 
-        # 3 for the offset between Cond after MatchName
-        # and NextEntry
-        imulq $(2), %rax
+# ======================================================
+# EVAL
+# ======================================================
 
-        # For Cond
-        push %rax
+# Save the current runtime context and go to the routine
+# defined by user words. No registers are preserved, but
+# guaranteed to lead the instruction pointer back.
 
-CodeEnd MatchName
+Code Eval_Branch
+    
+    # For debugging
+    incq EvaluationLevel(%rip)
 
-Code EnterEntry
-    movq DictionaryStartAddress(%rip), %r11 
-    GoToNextEntry %r11
-CodeEnd EnterEntry
+    # Save context and prepare to jump to the new
+    # session
+    movq %r11, %r12
+    GoToDefinition %r12
+    PushStack %r13
+    leaq ReturnAddress(%rip), %r13
+    
+    jmp *(%r12)
+
+    # -------------LEFT CURRENT SESSION-----------------
+
+    EvaluateDone:
+        decq EvaluationLevel(%rip)
+        PopStack %r13
+
+    # 4 for the distance to DefineLiteral 
+    movq $(3), %rax
+    # leave this to Cond
+    BranchStep %rax
+
+CodeEnd Eval_Branch
+
+# ======================================================
+# RETURN
+# ======================================================
+
+# A word that merely referred by Eval, that guide the
+# instruction pointer back to the code starting from
+# EvaluateDone in Eval.
+Code Return 
+    jmp EvaluateDone 
+ReturnAddress:
+    .quad Return
+CodeEnd Return
 
 Code NextEntry
     GoToNextEntry %r11
 CodeEnd NextEntry
 
-Code EndNotReached
+Code EndNotReached_LoopWhile
 
-    xorq %rax, %rax
     cmpq $(0x0), (%r11)
-    setne %al
+    je EndReached
+    ReEnterWord
 
-    # for LoopWhile
-    push %rax
-CodeEnd EndNotReached
+EndReached:
+CodeEnd EndNotReached_LoopWhile
 
 Word FindIteration
-    .quad MatchName
-    .quad Cond
-    .quad Eval
-    .quad Cond 
+    .quad MatchName_Branch
+    .quad Eval_Branch
     .quad NextEntry
-    .quad EndNotReached 
-    .quad LoopWhile
+    .quad EndNotReached_LoopWhile 
     .quad DefineLiteral
 WordEnd FindIteration
+
+Code EnterEntry
+    movq DictionaryStartAddress(%rip), %r11 
+    GoToNextEntry %r11
+CodeEnd EnterEntry
 
 Word ParseWord
     .quad EnterEntry
@@ -132,15 +141,10 @@ PrintCode:
 
 CodeEnd PrintEntryName
 
-Word PrintAndMove
+Word PrintEntryNameIteration
     .quad PrintEntryName
     .quad NextEntry
-WordEnd PrintAndMove
-
-Word PrintEntryNameIteration
-    .quad PrintAndMove
-    .quad EndNotReached
-    .quad LoopWhile
+    .quad EndNotReached_LoopWhile
 WordEnd PrintEntryNameIteration
 
 Word PrintEntryNames
