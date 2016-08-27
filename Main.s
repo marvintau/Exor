@@ -4,6 +4,12 @@
  *  Containing learning notes and resources
  */
 
+.set SyscallExit,		0x2000001
+.set SyscallDisplay,	        0x2000004
+.set SyscallRead,		0x2000003
+
+
+
 .equiv STR_LENG_FIELD_LEN, 8
 
 # For enabling self-modifiable code 

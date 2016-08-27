@@ -159,16 +159,13 @@ CodeEnd Rewind
 Word Compile
     .quad LocateWordBound
     .quad CompileFind
-    .quad BufferEndNotReached 
-    .quad PrintEntryNames
+    .quad BufferEndNotReached_LoopWhile 
     .quad LoopWhile
 WordEnd Compile
 
 Word CompileFind
     .quad MatchName_Branch
-    .quad Cond
     .quad StoreAddress 
-    .quad Cond 
     .quad NextEntry
     .quad EndNotReached_LoopWhile 
     .quad LoopWhile
