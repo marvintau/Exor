@@ -24,16 +24,6 @@
     leaq 16(\EntryReg), \EntryReg
 .endm
 
-Code EndNotReached
-
-    xorq %rax, %rax
-    cmpq $(0x0), (%r11)
-    setne %al
-
-    # for LoopWhile
-    push %rax
-CodeEnd EndNotReached
-
 # ==============================================
 # MATCH INPUT NAME WITH DICTIONARY
 # ==============================================
@@ -76,8 +66,6 @@ Code MatchName
 
 CodeEnd MatchName
 
-
-
 Code EnterEntry
     movq DictionaryStartAddress(%rip), %r11 
     GoToNextEntry %r11
@@ -87,12 +75,17 @@ Code NextEntry
     GoToNextEntry %r11
 CodeEnd NextEntry
 
-Word ParseWord
-    .quad EnterEntry
-    .quad Find
-WordEnd ParseWord
+Code EndNotReached
 
-Word Find
+    xorq %rax, %rax
+    cmpq $(0x0), (%r11)
+    setne %al
+
+    # for LoopWhile
+    push %rax
+CodeEnd EndNotReached
+
+Word FindIteration
     .quad MatchName
     .quad Cond
     .quad Eval
@@ -101,7 +94,12 @@ Word Find
     .quad EndNotReached 
     .quad LoopWhile
     .quad DefineLiteral
-WordEnd Find
+WordEnd FindIteration
+
+Word ParseWord
+    .quad EnterEntry
+    .quad FindIteration
+WordEnd ParseWord
 
 Code PrintEntryName
     jmp PrintCode

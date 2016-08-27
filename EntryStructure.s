@@ -65,7 +65,7 @@
 .endm
 
 .macro CodeEnd name
-    ExecuteNextWord
+    jmp ExecuteNextWord
     EntryEnd \name
 .endm
 

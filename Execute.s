@@ -22,8 +22,7 @@
 # of executable instructions. This basically formed the
 # structure of the entries.
 
-BacktracingPrint:
-
+EntryHeader BacktracingPrint
     jmp BacktracingPrintStart
 
 Arrow:
@@ -75,18 +74,14 @@ BacktracingPrintContinue:
     popq    %rbx
     popq    %rax
     ret
+EntryEnd BacktracingPrint 
 
-ExecuteNextWord:
+EntryHeader ExecuteNextWord
     call BacktracingPrint
     movq  (%r13), %r12
     leaq 8(%r13), %r13
-
- 
     jmpq *(%r12)
-
-.macro ExecuteNextWord
-    jmp ExecuteNextWord
-.endm
+EntryEnd ExecuteNextWord
 
 # ENTERWORD
 # =====================
@@ -97,18 +92,15 @@ ExecuteNextWord:
 # pointer points to the referred entry by changing the Entry
 # Register (ER).
 
-EnterWord:
+
+EntryHeader EnterWord
     PushStack %r13
     leaq 8(%r12),  %r12
     movq   %r12,   %r13
-    ExecuteNextWord
+    jmp ExecuteNextWord
+EntryEnd EnterWord
 
-# ENTER FIRST WORD
-# ======================
-# Since there is no prior word entry referring, we just stores
-# the address of exiting routine in the RAR, instead of pushing
-# another address into it.
-
+EntryHeader SystemEntrance
 ExitAddress:
     .quad SystemExit
 
@@ -117,5 +109,4 @@ ExecuteSystemWord:
     
     movq %r11, %r12
     jmp  *(%r12)
-
-
+EntryEnd SystemEntrance

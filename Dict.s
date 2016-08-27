@@ -18,6 +18,7 @@
 DictEnd:
     .quad 0x000000000000
     .include "BuiltinEntries.s"
+    .include "Execute.s"
     .include "Lexer.s"
     .include "Find.s"
     .include "Eval.s"

@@ -38,7 +38,6 @@
 .text
 .include "IO.s"
 .include "Stack.s"
-.include "Execute.s"
 
 .globl _main
 
