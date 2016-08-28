@@ -42,7 +42,6 @@
 # DATA segment are not permitted to be executed.
 
 .text
-.include "IO.s"
 
 .globl _main
 

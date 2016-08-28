@@ -9,6 +9,31 @@
 # Before we developed the word that enables us to define string in run
 # time, we will keep using this one.
 
+.macro PrintStringInitial address
+	pushq	%rax
+        pushq   %rbx
+	pushq	%rcx
+	pushq   %rdi
+	pushq	%rsi
+	pushq	%rdx
+        pushq   \address
+
+	movq	$SyscallDisplay, %rax
+	movq	$1, %rdi
+        movq    $1, %rbx
+	leaq	8(\address), %rsi
+	movq	(\address), %rdx
+	syscall
+	
+        popq    \address
+	popq	%rdx
+	popq	%rsi
+	popq	%rdi
+	popq	%rcx
+        popq    %rbx
+	popq	%rax
+.endm
+
 .macro StringConst name, string
     Code \name
 
@@ -18,7 +43,7 @@
             push %r15
             leaq Content\name(%rip), %r15
             leaq -8(%r15), %r15
-            call PrintConstString
+            PrintStringInitial %r15
             pop  %r15       
 
     CodeEnd \name
