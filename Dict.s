@@ -33,7 +33,7 @@ DictEnd:
     .include "Execute.s"
     .include "BuiltinEntries.s"
     .include "Lexer.s"
-    .include "Find.s"
+    .include "Interpret.s"
     .include "Define.s"
 
     .include "StringDisplay.s"
