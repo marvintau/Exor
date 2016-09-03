@@ -102,7 +102,7 @@ Code LocateWordBound
 
 CodeEnd LocateWordBound
 
-Code BufferEndNotReached_LoopWhile
+Code LoopWhileufferEndNotReached
     leaq InputBuffer(%rip), %r9 
     cmpq %r8, %r9
     je Reached
@@ -110,7 +110,7 @@ Code BufferEndNotReached_LoopWhile
         ReEnterWord
     Reached:    
 
-CodeEnd BufferEndNotReached_LoopWhile 
+CodeEnd LoopWhileufferEndNotReached 
 
 Word ExecuteSession
     # %r8 as Buffer Start Register, which holds the starting position
@@ -120,7 +120,7 @@ Word ExecuteSession
     
     .quad LocateWordBound
     .quad ParseWord
-    .quad BufferEndNotReached_LoopWhile 
+    .quad LoopWhileufferEndNotReached 
 
 WordEnd ExecuteSession
 
