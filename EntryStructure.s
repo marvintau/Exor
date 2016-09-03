@@ -48,7 +48,7 @@
 .macro EntryEnd name
 
     EntryEndOf\name:
-	.quad (Header\name - DictEnd)
+	.quad Header\name
 
 .endm
 
@@ -91,10 +91,7 @@
 # also execlusively used by FindEntry
 
 .macro GoToEntry EntryReg
-    push %r10
-    leaq DictEnd(%rip), %r10
-    leaq (%r10, \EntryReg), \EntryReg
-    pop %r10
+    leaq (\EntryReg), \EntryReg
 .endm
 
 .macro GoToNextEntry EntryReg

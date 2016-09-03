@@ -65,8 +65,7 @@ BacktracingPrintStart:
     # %r12 currently points to the address where actual
     # code or the code of enterword begins. The following
     # two steps makes %rax points to the entry header.
-    movq    %r12, %rax              
-    subq    -8(%rax), %rax          
+    movq    (%r13), %rax
                                    
     movq    (%rax), %rdx           
     leaq    8(%rax), %rsi
