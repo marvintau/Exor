@@ -1,5 +1,5 @@
 all: Main.s
-	cc  $^ -o exor
+	cc  $^ -v -o exor
 	otool -tV exor
 	otool -d exor
 

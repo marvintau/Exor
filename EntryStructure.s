@@ -26,11 +26,14 @@
 # indicates the distance between the actual entry entering point and the
 # header of the entry.
 
-.macro EntryHeader name
+.set INTERPRET_ALWAYS, 0x1
+.set INTEPRET_NORMAL, 0x0
+
+.macro EntryHeader name, IntepretMode=INTEPRET_NORMAL
 
     Header\name:
         String Entry\name, "\name"
-        .quad (\name - Header\name)
+        .byte \IntepretMode  
     \name:
 
 .endm
@@ -61,8 +64,8 @@
 # to the next word. Thus we include this in CodeEnd macro. Word entry is
 # always finished up with ExitWord, a subroutine that leads back to 
 
-.macro Code name
-    EntryHeader \name
+.macro Code name, IntepretMode=INTEPRET_NORMAL
+    EntryHeader \name, \IntepretMode
         .quad ActualCodeOf\name
     ActualCodeOf\name:
 .endm
@@ -72,8 +75,8 @@
     EntryEnd \name
 .endm
 
-.macro Word name
-    EntryHeader \name
+.macro Word name, IntepretMode=INTEPRET_NORMAL
+    EntryHeader \name, \IntepretMode
         .quad EnterWord
 .endm
 
@@ -105,7 +108,7 @@
 
 .macro GoToDefinition EntryReg
     addq (\EntryReg), \EntryReg
-    leaq 16(\EntryReg), \EntryReg
+    leaq 9(\EntryReg), \EntryReg
 .endm
 
 
