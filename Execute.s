@@ -42,61 +42,7 @@
 # of executable instructions. This basically formed the
 # structure of the entries.
 
-EntryHeader BacktracingPrint
-    jmp BacktracingPrintStart
-
-Arrow:
-    .ascii " ==> "
-
-BacktracingPrintStart:
-
-    pushq   %rax
-    pushq   %rbx
-    pushq   %rcx
-    pushq   %rdi
-    pushq   %rsi
-    pushq   %rdx
-    pushq   %r11
-
-    movq    EvaluationLevel(%rip), %rax
-    cmpq     $(0), %rax
-    je      BacktracingPrintContinue
-
-    # %r12 currently points to the address where actual
-    # code or the code of enterword begins. The following
-    # two steps makes %rax points to the entry header.
-    movq    (%r13), %rax
-                                   
-    movq    (%rax), %rdx           
-    leaq    8(%rax), %rsi
-
-    movq    $SyscallDisplay, %rax
-    movq    $(1), %rdi
-    movq    $(1), %rbx
-    syscall
-
-    movq   $SyscallDisplay, %rax
-    movq   $(1), %rdi
-    movq   $(1), %rbx
-    leaq   Arrow(%rip), %rsi
-    movq   $(5), %rdx
-    syscall
-
-    
-BacktracingPrintContinue:
- 
-    popq    %r11
-    popq    %rdx
-    popq    %rsi
-    popq    %rdi
-    popq    %rcx
-    popq    %rbx
-    popq    %rax
-    ret
-EntryEnd BacktracingPrint 
-
 EntryHeader ExecuteNextWord
-    call BacktracingPrint
     movq  (%r13), %r12
     leaq 8(%r13), %r13
     jmpq *(%r12)
