@@ -179,9 +179,6 @@ Code StoreAddress
     leaq (%rax, %rbx), %rbx
 
     # Now %rbx is the address to be written with new word
-
-    
-
 CodeEnd StoreAddress
 
 Code RemoveLastEntry

@@ -48,6 +48,8 @@ EntryHeader BacktracingPrint
 
 Arrow:
     .ascii " ==> "
+NewLine:
+    .ascii "\n"
 
 BacktracingPrintStart:
 
@@ -66,6 +68,16 @@ BacktracingPrintStart:
     # %r12 currently points to the address where actual
     # code or the code of enterword begins. The following
     # two steps makes %rax points to the entry header.
+
+    pushq  %rax
+    movq   $SyscallDisplay, %rax
+    movq   $(1), %rdi
+    movq   $(1), %rbx
+    leaq   Arrow(%rip), %rsi
+    movq   $(5), %rdx
+    syscall
+
+    popq    %rax
     movq    %r12, %rax              
     subq    -8(%rax), %rax          
                                    
@@ -80,8 +92,8 @@ BacktracingPrintStart:
     movq   $SyscallDisplay, %rax
     movq   $(1), %rdi
     movq   $(1), %rbx
-    leaq   Arrow(%rip), %rsi
-    movq   $(5), %rdx
+    leaq   NewLine(%rip), %rsi
+    movq   $(1), %rdx
     syscall
 
     
